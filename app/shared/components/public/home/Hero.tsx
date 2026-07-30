@@ -23,17 +23,7 @@ export default function Hero() {
         className="absolute inset-0 -z-10 bg-hard-brown/35"
       />
 
-      <div className="px-6 flex min-h-svh w-full  flex-col py-5 sm:px-8 sm:py-6 lg:px-12">
-        {/* Encabezado */}
-        <header className="flex items-start justify-between pb-4">
-          <Image
-            src="/aroma-logo.png"
-            alt="Aroma"
-            width={300}
-            height={300}
-            className="h-auto w-28 sm:w-36 lg:w-40"
-          />
-        </header>
+      <div className="px-6 flex min-h-svh w-full flex-col py-5 sm:px-8 sm:py-6 ">
 
         {/* Contenido principal */}
         <div className="grid flex-1 grid-cols-1 content-end gap-10 py-10 lg:grid-cols-12 lg:items-end lg:gap-8 lg:py-14">

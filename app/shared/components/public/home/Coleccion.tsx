@@ -3,6 +3,8 @@ import Link from "next/link";
 import React from "react";
 import ProductCard from "./Producto";
 
+
+
 export default function ColeccionSection() {
     return (
       <section className="flex flex-col p-6 py-24 md:py-12 md:py-24 gap-3 bg-[#F4EDE9]">

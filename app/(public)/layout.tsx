@@ -1,6 +1,6 @@
 import Navbar from "@/app/shared/components/Navbar";
 import React, { ReactNode } from "react";
-import Footer from './../../shared/components/Footer';
+import Footer from '../shared/components/Footer';
 
 
 interface HomeLayoutProps {
