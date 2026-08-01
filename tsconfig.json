@@ -29,7 +29,8 @@
       "@context/*": ["./context/*"],
       "@services/*": ["./services/*"],
       "@types/*": ["./types/*"],
-      "@lib/*": ["./lib/*"]
+      "@lib/*": ["./lib/*"],
+      "@shared/*": ["./shared/*"]
     }
   },
   "include": [
