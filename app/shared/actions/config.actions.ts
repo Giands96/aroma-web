@@ -1,0 +1,32 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/app/shared/actions/require-admin";
+import { actionClient } from "@/app/shared/lib/safe-action";
+import {
+  cartLimitsSchema,
+  whatsappConfigSchema,
+} from "@/app/shared/lib/validations/config.schema";
+import {
+  updateCartLimits,
+  updateWhatsAppConfig,
+} from "@/app/shared/services/config.service";
+
+export const updateWhatsAppConfigAction = actionClient
+  .inputSchema(whatsappConfigSchema)
+  .action(async ({ parsedInput }) => {
+    await requireAdmin();
+    const config = await updateWhatsAppConfig(parsedInput);
+    revalidatePath("/dashboard/configuracion");
+    revalidatePath("/carrito");
+    return config;
+  });
+
+export const updateCartLimitsAction = actionClient
+  .inputSchema(cartLimitsSchema)
+  .action(async ({ parsedInput }) => {
+    await requireAdmin();
+    const limits = await updateCartLimits(parsedInput);
+    revalidatePath("/dashboard/configuracion");
+    return limits;
+  });
