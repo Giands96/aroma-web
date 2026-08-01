@@ -1,2 +1,9 @@
-// safe-action client configuration
-// Installed in Task 3 — see docs/superpowers/plans/2026-07-30-aroma-supabase-plan.md
+import { createSafeActionClient } from "next-safe-action";
+
+export const actionClient = createSafeActionClient({
+
+  handleServerError(error) {
+    console.error("Server Action failed:", error);
+    return "Ocurrió un error inesperado. Por favor, inténtalo de nuevo más tarde.";
+  },
+});
