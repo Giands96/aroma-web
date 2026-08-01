@@ -28,7 +28,8 @@
       "@hooks/*": ["./hooks/*"],
       "@context/*": ["./context/*"],
       "@services/*": ["./services/*"],
-      "@types/*": ["./types/*"]
+      "@types/*": ["./types/*"],
+      "@lib/*": ["./lib/*"]
     }
   },
   "include": [
