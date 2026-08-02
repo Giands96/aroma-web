@@ -41,9 +41,7 @@ function revalidateProductPaths(slug: string) {
   revalidatePath("/dashboard/productos");
 }
 
-export const createProductAction = actionClient
-  .inputSchema(createProductInputSchema)
-  .action(async ({ parsedInput }) => {
+export const createProductAction = actionClient.inputSchema(createProductInputSchema).action(async ({ parsedInput }) => {
     await requireAdmin();
 
     const { packs, image_upload_id, ...productInput } = parsedInput;

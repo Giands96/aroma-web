@@ -5,6 +5,7 @@ export interface Product {
   descripcion: string;
   imagen_public_id: string | null;
   imagen_url: string | null;
+  precio: number;
   activo: boolean;
   created_at: string;
   updated_at: string;
