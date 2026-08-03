@@ -1,3 +1,7 @@
+import type { ProductOption } from "./product-option.types";
+
+export type { ProductOption } from "./product-option.types";
+
 export interface Product {
   id: string;
   slug: string;
@@ -5,29 +9,20 @@ export interface Product {
   descripcion: string;
   imagen_public_id: string | null;
   imagen_url: string | null;
-  precio: number;
   activo: boolean;
   created_at: string;
   updated_at: string;
-  packs?: Pack[];
-}
-
-export interface Pack {
-  id: string;
-  product_id: string;
-  cantidad: number;
-  precio: number;
-  activo: boolean;
+  product_options?: ProductOption[];
 }
 
 export interface CartItem {
+  optionId: string;
   productId: string;
-  productSlug: string;
   productName: string;
-  packId: string;
-  packQuantity: number;
-  packPrice: number;
-  itemQuantity: number;
+  optionName: string;
+  unitsPerOption: number;
+  optionPrice: number;
+  quantity: number;
 }
 
 export interface WhatsAppConfig {
