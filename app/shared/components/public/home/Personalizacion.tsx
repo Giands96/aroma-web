@@ -80,7 +80,7 @@ export default function PersonalizationSection() {
             <div className="flex items-start justify-between">
               <span
                 className="
-                  font-dm-sans text-[0.65rem] uppercase
+                  font-dm-sans text-[0.8rem] uppercase
                   tracking-[0.2em]
                 "
               >
@@ -144,7 +144,7 @@ export default function PersonalizationSection() {
           >
             <span
               className="
-                font-dm-sans text-[0.65rem] uppercase
+                font-dm-sans text-[0.8rem] uppercase
                 tracking-[0.22em]
               "
             >
@@ -255,7 +255,7 @@ export default function PersonalizationSection() {
           >
             <span
               className="
-                font-dm-sans text-[0.65rem] uppercase
+                font-dm-sans text-sm uppercase
                 tracking-[0.2em]
               "
             >
@@ -275,8 +275,8 @@ export default function PersonalizationSection() {
               <MoveRight
                 aria-hidden="true"
                 className="
-                  size-7 transition-transform duration-300
-                  group-hover:translate-x-2
+                  size-10 transition-all duration-300
+                  group-hover:translate-x-2 p-2 border rounded-full group-hover:bg-hard-brown group-hover:text-white 
                 "
               />
             </div>
