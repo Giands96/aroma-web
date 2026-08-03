@@ -2,34 +2,40 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { assertValidPackReconciliation } from "@/app/shared/actions/pack-reconciliation";
+import {
+  assertActiveProductHasOption,
+  assertValidProductOptionReconciliation,
+} from "@/app/shared/actions/product-option-reconciliation";
 import { requireAdmin } from "@/app/shared/actions/require-admin";
 import { actionClient } from "@/app/shared/lib/safe-action";
-import { packSchema } from "@/app/shared/lib/validations/pack.schema";
+import { productOptionSchema } from "@/app/shared/lib/validations/product-option.schema";
 import {
   productSchema,
   productUpdateSchema,
 } from "@/app/shared/lib/validations/product.schema";
 import { deleteImageFromCloudinary } from "@/app/shared/services/cloudinary.service";
 import {
-  createProductWithPacks,
+  createProductWithOptions,
   deleteProduct,
   getProductById,
   updateProduct,
-  updateProductWithPacks,
+  updateProductWithOptions,
 } from "@/app/shared/services/products.service";
-import { getAllPacksByProductId } from "@/app/shared/services/packs.service";
+import { getAllProductOptionsByProductId } from "@/app/shared/services/product-options.service";
 
-const packInputSchema = packSchema.extend({ id: z.uuid().optional() });
+const productOptionInputSchema = productOptionSchema.extend({ id: z.uuid().optional() });
 
 const createProductInputSchema = productSchema.extend({
-  packs: z.array(packInputSchema).min(1),
+  options: z.array(productOptionInputSchema).min(1).refine(
+    (options) => options.some((option) => option.activo),
+    "An active product requires an active option."
+  ),
   image_upload_id: z.uuid().optional(),
 });
 
 const updateProductInputSchema = productUpdateSchema.extend({
   id: z.uuid(),
-  packs: z.array(packInputSchema).optional(),
+  options: z.array(productOptionInputSchema).optional(),
   image_upload_id: z.uuid().optional(),
 });
 
@@ -44,8 +50,8 @@ function revalidateProductPaths(slug: string) {
 export const createProductAction = actionClient.inputSchema(createProductInputSchema).action(async ({ parsedInput }) => {
     await requireAdmin();
 
-    const { packs, image_upload_id, ...productInput } = parsedInput;
-    const product = await createProductWithPacks(productInput, packs, image_upload_id);
+    const { options, image_upload_id, ...productInput } = parsedInput;
+    const product = await createProductWithOptions(productInput, options, image_upload_id);
 
     revalidateProductPaths(product.slug);
     return product;
@@ -56,19 +62,23 @@ export const updateProductAction = actionClient
   .action(async ({ parsedInput }) => {
     await requireAdmin();
 
-    const { id, packs, image_upload_id, ...productInput } = parsedInput;
+    const { id, options, image_upload_id, ...productInput } = parsedInput;
     const currentProduct = await getProductById(id);
     if (!currentProduct) throw new Error("Product not found");
 
-    if (packs) {
-      const existingPacks = await getAllPacksByProductId(id);
-      assertValidPackReconciliation(existingPacks, packs);
+    if (options) {
+      const existingOptions = await getAllProductOptionsByProductId(id);
+      assertValidProductOptionReconciliation(existingOptions, options);
+      assertActiveProductHasOption(productInput.activo ?? currentProduct.activo, options);
+    } else if (productInput.activo === true) {
+      const existingOptions = await getAllProductOptionsByProductId(id);
+      assertActiveProductHasOption(true, existingOptions);
     }
 
-    const product = packs
-      ? await updateProductWithPacks(id, productInput, packs, image_upload_id)
+    const product = options
+      ? await updateProductWithOptions(id, productInput, options, image_upload_id)
       : image_upload_id
-        ? await updateProductWithPacks(id, productInput, undefined, image_upload_id)
+        ? await updateProductWithOptions(id, productInput, undefined, image_upload_id)
         : await updateProduct(id, productInput);
 
     if (
