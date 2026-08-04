@@ -1,53 +1,79 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { useState } from 'react';
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
 
 interface ProductCardProps {
-    id: string;
-    imageSrc: string;
-    nombre: string;
-    precio: number;
+  slug: string;
+  imageSrc: string | null;
+  nombre: string;
+  precio: number;
 }
 
-export default function ProductCard({ id, imageSrc, nombre, precio }: ProductCardProps) {
-    const [isLoading, setIsLoading] = useState(true);
-    const [hasError, setHasError] = useState(false);
+export default function ProductCard({
+  slug,
+  imageSrc,
+  nombre,
+  precio,
+}: ProductCardProps) {
+  const [isLoading, setIsLoading] = useState(() => Boolean(imageSrc));
+  const [hasError, setHasError] = useState(false);
 
-    return (
-        <Link href={`/coleccion/${id}`} className="flex flex-col gap-2">
-            <div className="relative w-full aspect-square bg-white overflow-hidden">
-                {isLoading && (
-                    <div className="absolute inset-0 animate-pulse bg-neutral-200" />
-                )}
+  const formattedPrice = new Intl.NumberFormat("es-PE", {
+    style: "currency",
+    currency: "PEN",
+  }).format(precio);
 
-                {!hasError ? (
-                    <Image
-                        className={`object-cover transition-opacity duration-300 ${
-                            isLoading ? 'opacity-0' : 'opacity-100'
-                        }`}
-                        src={imageSrc}
-                        alt={nombre}
-                        fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        onLoad={() => setIsLoading(false)}
-                        onError={() => {
-                            setIsLoading(false);
-                            setHasError(true);
-                        }}
-                    />
-                ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 text-neutral-400 text-sm">
-                        Sin imagen
-                    </div>
-                )}
-            </div>
+  return (
+    <Link
+      href={`/coleccion/producto/${slug}`}
+      className="group flex min-w-0 flex-col gap-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-hard-brown"
+    >
+      <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">
+        {isLoading && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 animate-pulse bg-neutral-200"
+          />
+        )}
 
-            <div className="text-center">
-                <h3 className="text-hard-brown text-3xl">{nombre}</h3>
-                <p className="text-neutral-700 text-xl font-semibold font-dm-sans">S/ {precio}</p>
-            </div>
-        </Link>
-    );
+        {imageSrc && !hasError ? (
+          <Image
+            className={`object-cover transition duration-500 group-hover:scale-[1.02] ${
+              isLoading ? "opacity-0" : "opacity-100"
+            }`}
+            src={imageSrc}
+            alt={nombre}
+            fill
+            sizes="
+              (max-width: 639px) calc(100vw - 12px),
+              (max-width: 1023px) calc(50vw - 16px),
+              (max-width: 1279px) calc(33vw - 24px),
+              390px
+            "
+            onLoad={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false);
+              setHasError(true);
+            }}
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 font-dm-sans text-sm text-neutral-400">
+            Sin imagen
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col items-center gap-1 text-center">
+        <h3 className="line-clamp-2 font-dm-sans text-xl leading-tight text-hard-brown sm:text-2xl">
+          {nombre}
+        </h3>
+
+        <p className="font-dm-sans text-base font-semibold text-neutral-700 sm:text-lg">
+          {formattedPrice}
+        </p>
+      </div>
+    </Link>
+  );
 }

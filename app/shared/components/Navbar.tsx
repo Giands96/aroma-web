@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Menu, ShoppingBag, X } from "lucide-react";
-import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const navigationItems = [
   { label: "Inicio", href: "/home" },
@@ -13,8 +14,20 @@ const navigationItems = [
 ] as const;
 
 export default function Navbar() {
+  const pathname = usePathname();
+
+  return <NavbarContent key={pathname} pathname={pathname} />;
+}
+
+interface NavbarContentProps {
+  pathname: string;
+}
+
+function NavbarContent({ pathname }: NavbarContentProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const mobileMenuId = useId();
+
+  const isLightPage = pathname.startsWith("/personalizacion");
 
   const handleToggleMenu = () => {
     setIsMenuOpen((currentState) => !currentState);
@@ -25,64 +38,148 @@ export default function Navbar() {
   };
 
   useEffect(() => {
+    if (!isMenuOpen) {
+      return;
+    }
+
+    const previousOverflow = document.body.style.overflow;
+
     const handleEscapeKey = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         handleCloseMenu();
       }
     };
 
+    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", handleEscapeKey);
 
     return () => {
+      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleEscapeKey);
     };
-  }, []);
+  }, [isMenuOpen]);
+
+  const navbarClasses = isLightPage
+    ? "border-hard-brown/20 bg-[#FCFAF7]/90 text-hard-brown"
+    : "border-white/15 bg-black/10 text-white";
+
+  const interactiveClasses = isLightPage
+    ? "hover:bg-hard-brown/5 focus-visible:ring-hard-brown"
+    : "hover:bg-white/10 focus-visible:ring-white";
 
   return (
     <nav
       aria-label="Navegación principal"
-      className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-black/10 backdrop-blur-md"
+      className={`
+        fixed inset-x-0 top-0 z-50
+        border-b backdrop-blur-md
+        ${navbarClasses}
+      `}
     >
-      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div
+        className="
+          flex h-20 w-full
+          grid-cols-3 items-center justify-between
+          px-5 sm:px-8 lg:px-12
+        "
+      >
+        {/* Logo */}
         <Link
           href="/home"
           aria-label="Ir al inicio"
-          className="font-dm-sans text-xl font-bold text-white"
-          onClick={handleCloseMenu}
+          className="
+            justify-self-start rounded-sm
+            focus-visible:outline-none
+            focus-visible:ring-2
+            focus-visible:ring-current
+            focus-visible:ring-offset-4
+          "
         >
-          <Image src="/aroma-logo.png" alt="Hero" width={150} height={150} />
+          <Image
+            src="/aroma-logo.png"
+            alt="Aroma"
+            width={150}
+            height={60}
+            sizes="128px"
+            className={`
+              h-auto w-28 object-contain
+              md:w-32
+              ${
+                isLightPage
+                  ? "brightness-[0.6] contrast-125"
+                  : ""
+              }
+            `}
+          />
         </Link>
 
-        <ul className="hidden items-center gap-8 md:flex">
-          {navigationItems.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className="font-dm-sans text-lg text-white transition-opacity hover:opacity-70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
+        {/* Navegación escritorio */}
+        <ul className="hidden items-center justify-self-center gap-8 md:flex">
+          {navigationItems.map((item) => {
+            const isActive =
+              pathname === item.href ||
+              pathname.startsWith(`${item.href}/`);
+
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`
+                    relative block py-2
+                    font-dm-sans text-sm
+                    transition-opacity duration-300
+                    hover:opacity-65
+                    focus-visible:outline-none
+                    focus-visible:ring-2
+                    focus-visible:ring-current
+                    focus-visible:ring-offset-4
+                    ${
+                      isActive
+                        ? "after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:bg-current"
+                        : ""
+                    }
+                  `}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
         </ul>
 
-        <div className="hidden md:flex">
+        {/* Acciones */}
+        <div className="hidden justify-self-end md:flex">
           <Link
             href="/carrito"
             aria-label="Abrir carrito"
-            className="rounded-full p-2 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className={`
+              rounded-full p-2
+              transition-colors
+              focus-visible:outline-none
+              focus-visible:ring-2
+              ${interactiveClasses}
+            `}
           >
-            <ShoppingBag aria-hidden="true" />
+            <ShoppingBag aria-hidden="true" className="size-5" />
           </Link>
         </div>
 
+        {/* Botón móvil */}
         <button
           type="button"
           aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={isMenuOpen}
           aria-controls={mobileMenuId}
           onClick={handleToggleMenu}
-          className="rounded-md p-2 text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white md:hidden"
+          className={`
+            justify-self-end rounded-md p-2
+            transition-colors
+            focus-visible:outline-none
+            focus-visible:ring-2
+            md:hidden
+            ${interactiveClasses}
+          `}
         >
           {isMenuOpen ? (
             <X aria-hidden="true" />
@@ -95,6 +192,7 @@ export default function Navbar() {
       <MobileNavbar
         id={mobileMenuId}
         isOpen={isMenuOpen}
+        pathname={pathname}
         onClose={handleCloseMenu}
       />
     </nav>
@@ -104,12 +202,14 @@ export default function Navbar() {
 interface MobileNavbarProps {
   id: string;
   isOpen: boolean;
+  pathname: string;
   onClose: () => void;
 }
 
 function MobileNavbar({
   id,
   isOpen,
+  pathname,
   onClose,
 }: MobileNavbarProps) {
   if (!isOpen) {
@@ -119,29 +219,70 @@ function MobileNavbar({
   return (
     <div
       id={id}
-      className="absolute inset-x-0 top-full border-t border-neutral-200 bg-white shadow-lg md:hidden"
+      className="
+        fixed inset-x-0 top-20
+        h-[calc(100svh-5rem)]
+        overflow-y-auto
+        border-t border-hard-brown/20
+        bg-[#FCFAF7]
+        text-hard-brown
+        md:hidden
+      "
     >
-      <ul className="flex flex-col h-dvh">
-        {navigationItems.map((item) => (
-          <li key={item.href} className="border-b border-neutral-200">
-            <Link
-              href={item.href}
-              onClick={onClose}
-              className="block px-6 py-6 font-mileast text-3xl text-hard-brown transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
-            >
-              {item.label}
-            </Link>
-          </li>
-        ))}
+      <ul className="flex min-h-full flex-col">
+        {navigationItems.map((item) => {
+          const isActive =
+            pathname === item.href ||
+            pathname.startsWith(`${item.href}/`);
 
-        <li>
+          return (
+            <li
+              key={item.href}
+              className="border-b border-hard-brown/20"
+            >
+              <Link
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                onClick={onClose}
+                className={`
+                  flex items-center justify-between
+                  px-6 py-6
+                  font-mileast text-3xl
+                  transition-colors
+                  hover:bg-hard-brown/5
+                  focus-visible:bg-hard-brown/5
+                  focus-visible:outline-none
+                  ${isActive ? "bg-hard-brown/5" : ""}
+                `}
+              >
+                <span>{item.label}</span>
+
+                {isActive ? (
+                  <span className="font-dm-sans text-[0.6rem] uppercase tracking-[0.2em]">
+                    Actual
+                  </span>
+                ) : null}
+              </Link>
+            </li>
+          );
+        })}
+
+        <li className="mt-auto border-t border-hard-brown/20">
           <Link
             href="/carrito"
             onClick={onClose}
-            className="flex items-center gap-3 px-6 py-6 font-mileast text-3xl text-hard-brown transition-colors hover:bg-neutral-100 focus-visible:bg-neutral-100 focus-visible:outline-none"
+            className="
+              flex items-center justify-between
+              px-6 py-6
+              font-mileast text-3xl
+              transition-colors
+              hover:bg-hard-brown/5
+              focus-visible:bg-hard-brown/5
+              focus-visible:outline-none
+            "
           >
+            <span>Carrito</span>
             <ShoppingBag aria-hidden="true" />
-            Carrito
           </Link>
         </li>
       </ul>
