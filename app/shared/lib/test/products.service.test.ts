@@ -13,8 +13,10 @@ vi.mock("@/app/shared/lib/supabase/server", () => ({
 import {
   createProduct,
   createProductWithOptions,
+  deleteProduct,
   getProductBySlug,
   getProducts,
+  setProductImages,
   updateProduct,
   updateProductWithOptions,
 } from "../../services/products.service";
@@ -27,6 +29,7 @@ function queryResult(data: unknown, error: unknown = null) {
     insert: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
+    upsert: vi.fn(),
     single: vi.fn(),
     then: (resolve: (value: unknown) => unknown) =>
       Promise.resolve({ data, error }).then(resolve),
@@ -38,6 +41,7 @@ function queryResult(data: unknown, error: unknown = null) {
   query.insert.mockReturnValue(query);
   query.update.mockReturnValue(query);
   query.delete.mockReturnValue(query);
+  query.upsert.mockReturnValue(query);
   query.single.mockResolvedValue({ data, error });
 
   return query;
@@ -71,7 +75,7 @@ describe("products service", () => {
     const product = { id: "product-id", slug: "vela-aurora" };
     const query = queryResult(product);
     const from = vi.fn(() => query);
-    mocks.createAdminClient.mockReturnValue({ from });
+    mocks.createClient.mockResolvedValue({ from });
 
     await expect(
       createProduct({
@@ -84,24 +88,56 @@ describe("products service", () => {
     expect(query.insert).toHaveBeenCalledOnce();
   });
 
-  it("updates a product through the invariant-enforcing RPC", async () => {
-    const product = { id: "product-id", activo: false };
-    const rpc = vi.fn(() => ({ single: vi.fn().mockResolvedValue({ data: product, error: null }) }));
-    mocks.createClient.mockResolvedValue({ rpc });
+  it("stores the ordered product gallery in products.imagenes", async () => {
+    const images = [
+      {
+        public_id: "aroma/products/front",
+        secure_url: "https://res.cloudinary.com/example/front.jpg",
+      },
+    ];
+    const product = { id: "product-id", imagenes: images };
+    const query = queryResult(product);
+    const from = vi.fn(() => query);
+    mocks.createClient.mockResolvedValue({ from });
 
-    await updateProduct("product-id", { activo: false });
-    expect(rpc).toHaveBeenCalledWith("update_product_with_options", {
-      target_product_id: "product-id",
-      product_data: { activo: false },
-      option_data: null,
-      image_upload_id: null,
+    await expect(setProductImages("product-id", images)).resolves.toEqual(product);
+    expect(query.update).toHaveBeenCalledWith({
+      imagenes: images,
+      imagen_public_id: images[0].public_id,
+      imagen_url: images[0].secure_url,
     });
+    expect(query.eq).toHaveBeenCalledWith("id", "product-id");
   });
 
-  it("creates a product and options through one database RPC", async () => {
+  it("deletes a product with the authenticated server client", async () => {
+    const query = queryResult(null);
+    mocks.createClient.mockResolvedValue({ from: vi.fn(() => query) });
+
+    await expect(deleteProduct("product-id")).resolves.toBeUndefined();
+    expect(query.delete).toHaveBeenCalledOnce();
+    expect(query.eq).toHaveBeenCalledWith("id", "product-id");
+  });
+
+  it("updates a product through the authenticated products table", async () => {
+    const product = { id: "product-id", activo: false };
+    const query = queryResult(product);
+    mocks.createClient.mockResolvedValue({ from: vi.fn(() => query) });
+
+    await updateProduct("product-id", { activo: false });
+    expect(query.update).toHaveBeenCalledWith({ activo: false });
+    expect(query.eq).toHaveBeenCalledWith("id", "product-id");
+  });
+
+  it("creates a product and its options through authenticated tables", async () => {
     const product = { id: "product-id", slug: "vela-aurora" };
-    const rpc = vi.fn(() => ({ single: vi.fn().mockResolvedValue({ data: product, error: null }) }));
-    mocks.createClient.mockResolvedValue({ rpc });
+    const productQuery = queryResult(product);
+    const optionsQuery = queryResult([
+      { id: "option-id", product_id: "product-id", nombre: "Caja x6" },
+    ]);
+    const from = vi.fn((table: string) =>
+      table === "products" ? productQuery : optionsQuery
+    );
+    mocks.createClient.mockResolvedValue({ from });
 
     await expect(
       createProductWithOptions(
@@ -112,14 +148,31 @@ describe("products service", () => {
         },
         [{ nombre: "Caja x6", cantidad: 6, precio: 84.9, activo: true }]
       )
-    ).resolves.toEqual(product);
-    expect(rpc).toHaveBeenCalledWith("create_product_with_options", expect.any(Object));
+    ).resolves.toMatchObject(product);
+    expect(productQuery.insert).toHaveBeenCalledOnce();
+    expect(optionsQuery.insert).toHaveBeenCalledWith([
+      {
+        product_id: "product-id",
+        nombre: "Caja x6",
+        cantidad: 6,
+        precio: 84.9,
+        activo: true,
+      },
+    ]);
   });
 
-  it("updates a product and its options through one database RPC", async () => {
+  it("updates product options without an RPC", async () => {
     const product = { id: "product-id", slug: "vela-aurora" };
-    const rpc = vi.fn(() => ({ single: vi.fn().mockResolvedValue({ data: product, error: null }) }));
-    mocks.createClient.mockResolvedValue({ rpc });
+    const productQuery = queryResult(product);
+    const existingOptionsQuery = queryResult([{ id: "option-id" }]);
+    const optionsQuery = queryResult(null);
+    let productOptionsCalls = 0;
+    const from = vi.fn((table: string) => {
+      if (table === "products") return productQuery;
+      productOptionsCalls += 1;
+      return productOptionsCalls === 1 ? existingOptionsQuery : optionsQuery;
+    });
+    mocks.createClient.mockResolvedValue({ from });
 
     await expect(
       updateProductWithOptions(
@@ -127,8 +180,21 @@ describe("products service", () => {
         { nombre: "Vela Aurora" },
         [{ id: "option-id", nombre: "Caja x6", cantidad: 6, precio: 84.9, activo: true }]
       )
-    ).resolves.toEqual(product);
-    expect(rpc).toHaveBeenCalledWith("update_product_with_options", expect.any(Object));
+    ).resolves.toMatchObject(product);
+    expect(productQuery.update).toHaveBeenCalledWith({ nombre: "Vela Aurora" });
+    expect(optionsQuery.upsert).toHaveBeenCalledWith(
+      [
+        {
+          id: "option-id",
+          product_id: "product-id",
+          nombre: "Caja x6",
+          cantidad: 6,
+          precio: 84.9,
+          activo: true,
+        },
+      ],
+      { onConflict: "id" }
+    );
   });
 
   it("rejects duplicate option IDs before invoking the update RPC", async () => {

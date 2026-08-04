@@ -1,8 +1,5 @@
 import "server-only";
-import {
-  createAdminClient,
-  createClient,
-} from "@/app/shared/lib/supabase/server";
+import { createClient } from "@/app/shared/lib/supabase/server";
 import type { ProductOption } from "@/app/shared/types";
 
 export interface ProductOptionWriteInput {
@@ -60,7 +57,7 @@ export async function getProductOptionById(
 export async function createProductOption(
   input: ProductOptionWriteInput
 ): Promise<ProductOption> {
-  const supabase = createAdminClient();
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("product_options")
     .insert(input)
@@ -77,21 +74,22 @@ export async function updateProductOption(
 ): Promise<ProductOption> {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .rpc("update_product_option", {
-      target_option_id: id,
-      option_data: input,
-    })
+    .from("product_options")
+    .update(input)
+    .eq("id", id)
+    .select()
     .single();
 
-  if (error) throw error;
+  if (error) throw new Error(error.message);
   return data as ProductOption;
 }
 
 export async function deleteProductOption(id: string): Promise<void> {
   const supabase = await createClient();
-  const { error } = await supabase.rpc("delete_product_option", {
-    target_option_id: id,
-  });
+  const { error } = await supabase
+    .from("product_options")
+    .delete()
+    .eq("id", id);
 
-  if (error) throw error;
+  if (error) throw new Error(error.message);
 }

@@ -28,12 +28,15 @@ export async function signOut() {
 export async function getCurrentUser() {
   const supabase = await createClient();
 
-  const {data: { user }, error} = await supabase.auth.getUser();
+  try {
+    const { data: { user }, error } = await supabase.auth.getUser();
 
-  if (error) {
-    console.error(error);
+    if (error) {
+      return null;
+    }
+
+    return user;
+  } catch {
     return null;
   }
-
-  return user;
 }

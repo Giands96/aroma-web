@@ -3,20 +3,11 @@ import { v2 as cloudinary } from "cloudinary";
 import type { ValidatedImage } from "@/app/shared/lib/validations/image.schema";
 
 function configureCloudinary() {
-  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-  const apiKey = process.env.CLOUDINARY_API_KEY;
-  const apiSecret = process.env.CLOUDINARY_API_SECRET;
-
-  if (!cloudName || !apiKey || !apiSecret) {
+  if (!process.env.CLOUDINARY_URL) {
     throw new Error("Cloudinary no está configurado en el servidor.");
   }
 
-  cloudinary.config({
-    cloud_name: cloudName,
-    api_key: apiKey,
-    api_secret: apiSecret,
-    secure: true,
-  });
+  cloudinary.config(true);
 }
 
 export async function uploadImageToCloudinary(
@@ -36,7 +27,11 @@ export async function uploadImageToCloudinary(
       },
       (error, result) => {
         if (error || !result) {
-          reject(error ?? new Error("No se pudo subir la imagen."));
+          const message =
+            error && typeof error === "object" && "message" in error
+              ? String(error.message)
+              : "No se pudo subir la imagen.";
+          reject(error instanceof Error ? error : new Error(message));
           return;
         }
 

@@ -64,7 +64,7 @@ describe("product options service", () => {
       activo: true,
     };
     const query = queryResult(option);
-    mocks.createAdminClient.mockReturnValue({ from: vi.fn(() => query) });
+    mocks.createClient.mockResolvedValue({ from: vi.fn(() => query) });
 
     await expect(
       createProductOption({
@@ -93,24 +93,27 @@ describe("product options service", () => {
     await expect(getProductOptionById("missing-option")).resolves.toBeNull();
   });
 
-  it("updates and deletes through invariant-enforcing RPCs", async () => {
-    const rpc = vi.fn(() => ({
-      single: vi.fn().mockResolvedValue({
-        data: { id: "option-id", nombre: "Caja x3", cantidad: 3, precio: 40 },
-        error: null,
-      }),
-    }));
-    mocks.createClient.mockResolvedValue({ rpc });
-
-    await updateProductOption("option-id", { precio: 40 });
-    await deleteProductOption("option-id");
-
-    expect(rpc).toHaveBeenCalledWith("update_product_option", {
-      option_data: { precio: 40 },
-      target_option_id: "option-id",
+  it("updates and deletes through the authenticated options table", async () => {
+    const updateQuery = queryResult({
+      id: "option-id",
+      nombre: "Caja x3",
+      cantidad: 3,
+      precio: 40,
     });
-    expect(rpc).toHaveBeenCalledWith("delete_product_option", {
-      target_option_id: "option-id",
+    const deleteQuery = queryResult(null);
+    let calls = 0;
+    const from = vi.fn(() => (calls++ === 0 ? updateQuery : deleteQuery));
+    mocks.createClient.mockResolvedValue({ from });
+
+    await expect(updateProductOption("option-id", { precio: 40 })).resolves.toMatchObject({
+      id: "option-id",
+      precio: 40,
     });
+    await expect(deleteProductOption("option-id")).resolves.toBeUndefined();
+
+    expect(updateQuery.update).toHaveBeenCalledWith({ precio: 40 });
+    expect(updateQuery.eq).toHaveBeenCalledWith("id", "option-id");
+    expect(deleteQuery.delete).toHaveBeenCalledOnce();
+    expect(deleteQuery.eq).toHaveBeenCalledWith("id", "option-id");
   });
 });
