@@ -14,9 +14,9 @@ describe("buildWhatsAppUrl", () => {
         optionPrice: 65,
         quantity: 1,
       }],
-      "Hola Aroma, quiero consultar por:"
+      "Hola Aroma, quiero consultar por {producto_name}: {producto_cantidad} x {producto_precio}"
     );
 
-    expect(decodeURIComponent(url)).toContain("Vela Aurora - Pack regalo: 1 x S/");
+    expect(decodeURIComponent(url)).toContain("Hola Aroma, quiero consultar por Vela Aurora: 1 x S/");
   });
 });

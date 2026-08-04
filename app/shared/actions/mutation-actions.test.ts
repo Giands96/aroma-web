@@ -26,8 +26,8 @@ describe("configuration actions", () => {
   it("updates WhatsApp configuration only after the admin guard passes", async () => {
     const config = {
       telefono: "51945513054",
-      mensaje_base: "Hola Aroma, quiero consultar por:",
-      mensaje_personalizado: "Hola Aroma, quiero un pedido personalizado!",
+      mensaje_carrito: "Hola Aroma, quiero cotizar mi carrito:",
+      mensaje_producto: "Hola Aroma, quiero consultar por {producto_name}.",
     };
     mocks.updateWhatsAppConfig.mockResolvedValue(config);
 

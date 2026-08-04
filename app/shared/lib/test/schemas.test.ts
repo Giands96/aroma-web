@@ -50,8 +50,16 @@ describe("configuration schemas", () => {
     expect(
       whatsappConfigSchema.safeParse({
         telefono: "51945513054",
-        mensaje_base: "Hola Aroma, quiero consultar por:",
-        mensaje_personalizado: "Hola Aroma, quiero un pedido personalizado!",
+        mensaje_carrito: "Hola Aroma, quiero cotizar mi carrito:",
+        mensaje_producto: "Hola Aroma, quiero consultar por {producto_name}.",
+      }).success
+    ).toBe(true);
+
+    expect(
+      whatsappConfigSchema.safeParse({
+        telefono: "945513054",
+        mensaje_carrito: "Hola Aroma, quiero cotizar mi carrito:",
+        mensaje_producto: "Hola Aroma, quiero consultar por {producto_name}.",
       }).success
     ).toBe(true);
 
