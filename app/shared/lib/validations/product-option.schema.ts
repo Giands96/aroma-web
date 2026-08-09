@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const productOptionSchema = z.object({
+export const productOptionSchema = z.strictObject({
   nombre: z.string().trim().min(1, "El nombre es obligatorio").max(60),
   cantidad: z.coerce.number().int().min(1).max(99),
   precio: z.coerce.number().positive().refine(
@@ -8,9 +8,9 @@ export const productOptionSchema = z.object({
     "El precio debe tener como máximo dos decimales"
   ),
   activo: z.boolean().default(true),
-}).strict();
+});
 
-export const productOptionUpdateSchema = z.object({
+export const productOptionUpdateSchema = z.strictObject({
   nombre: z.string().trim().min(1, "El nombre es obligatorio").max(60).optional(),
   cantidad: z.coerce.number().int().min(1).max(99).optional(),
   precio: z.coerce.number().positive().refine(
@@ -18,7 +18,7 @@ export const productOptionUpdateSchema = z.object({
     "El precio debe tener como máximo dos decimales"
   ).optional(),
   activo: z.boolean().optional(),
-}).strict();
+});
 
 export const productOptionWithIdSchema = productOptionSchema.extend({
   id: z.uuid(),

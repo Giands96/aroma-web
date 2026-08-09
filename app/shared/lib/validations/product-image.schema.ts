@@ -2,14 +2,12 @@ import { z } from "zod";
 
 export const MAX_PRODUCT_IMAGES = 5;
 
-export const productImageSchema = z
-  .object({
-    public_id: z.string().trim().min(1).max(255),
-    secure_url: z.url(),
-    width: z.number().int().positive().optional(),
-    height: z.number().int().positive().optional(),
-  })
-  .strict();
+export const productImageSchema = z.strictObject({
+  public_id: z.string().trim().min(1).max(255),
+  secure_url: z.url(),
+  width: z.number().int().positive().optional(),
+  height: z.number().int().positive().optional(),
+});
 
 export const productImagesSchema = z
   .array(productImageSchema)
