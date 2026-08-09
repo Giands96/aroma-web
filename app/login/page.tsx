@@ -3,12 +3,14 @@
 import { useAction } from "next-safe-action/hooks";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Eye, EyeClosed } from "lucide-react";
 import { loginAction } from "@/app/shared/actions/auth.actions";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const { execute, result, isExecuting } = useAction(loginAction, {
     onSuccess: ({ data }) => {
       if (data.success) {
@@ -32,7 +34,7 @@ export default function LoginPage() {
         className="w-full max-w-sm space-y-6"
       >
         <div className="text-center">
-          <h1 className="font-mileast text-3xl text-hard-brown">
+          <h1 className="font-dm-sans font-bold text-3xl text-neutral-700">
             Panel Administrativo
           </h1>
           <p className="mt-2 font-dm-sans text-sm text-hard-brown/60">
@@ -78,23 +80,38 @@ export default function LoginPage() {
             >
               Contraseña
             </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="current-password"
-              required
-              className="mt-2 block w-full rounded-sm border border-hard-brown/20 bg-white px-4 py-3 font-dm-sans text-base text-hard-brown outline-none focus-visible:ring-2 focus-visible:ring-hard-brown"
-            />
+            <div className="relative mt-2">
+              <input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="current-password"
+                required
+                className="block w-full rounded-sm border border-hard-brown/20 bg-white px-4 py-3 pr-12 font-dm-sans text-base text-hard-brown outline-none focus-visible:ring-2 focus-visible:ring-hard-brown"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((visible) => !visible)}
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                aria-pressed={showPassword}
+                className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-hard-brown/60 transition-colors hover:text-hard-brown focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-hard-brown"
+              >
+                {showPassword ? (
+                  <EyeClosed aria-hidden="true" className="size-5" />
+                ) : (
+                  <Eye aria-hidden="true" className="size-5" />
+                )}
+              </button>
+            </div>
           </div>
         </div>
 
         <button
           type="submit"
           disabled={isExecuting}
-          className="w-full rounded-sm bg-hard-brown px-6 py-3 font-dm-sans text-sm uppercase tracking-[0.18em] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-sm bg-neutral-700 px-6 py-3 font-dm-sans text-sm uppercase tracking-[0.18em] text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isExecuting ? "Ingresando..." : "Ingresar"}
         </button>
