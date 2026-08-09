@@ -42,3 +42,6 @@ next-env.d.ts
 
 /graphify-out/*
 .py
+.opencode
+
+.atl
