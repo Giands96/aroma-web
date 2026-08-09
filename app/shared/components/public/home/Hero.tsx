@@ -32,7 +32,7 @@ export default function Hero() {
 
             <h1
               id="hero-title"
-              className="max-w-[11ch] font-mileast text-[clamp(3rem,10vw,9rem)] font-normal leading-[0.78] tracking-[-0.055em] text-balance"
+              className="animate-fadeInRight max-w-[11ch] animate-fadeIn font-mileast text-[clamp(3rem,10vw,9rem)] font-normal leading-[0.78] tracking-[-0.055em] text-balance"
             >
               Transformando
               <br />

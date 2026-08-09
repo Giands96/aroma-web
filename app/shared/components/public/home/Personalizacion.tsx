@@ -138,8 +138,8 @@ export default function PersonalizationSection() {
           <article
             className="
               flex min-h-[430px] flex-col justify-between
-              p-6 md:col-span-5 md:p-8
-              lg:min-h-[580px] lg:p-12
+              p-3 md:col-span-5 md:p-6
+              lg:min-h-[580px] 
             "
           >
             <span
@@ -153,7 +153,7 @@ export default function PersonalizationSection() {
 
             <p
               className="
-                max-w-xl font-mileast
+                w-full font-mileast
                 text-[clamp(3rem,6vw,7rem)]
                 leading-[0.86] tracking-[-0.05em]
               "
@@ -275,7 +275,7 @@ export default function PersonalizationSection() {
               <MoveRight
                 aria-hidden="true"
                 className="
-                  size-10 transition-all duration-300
+                  size-10 transition-colors-transformation duration-300
                   group-hover:translate-x-2 p-2 border rounded-full group-hover:bg-hard-brown group-hover:text-white 
                 "
               />

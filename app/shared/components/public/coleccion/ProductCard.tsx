@@ -20,10 +20,6 @@ export default function ProductCard({
   const [isLoading, setIsLoading] = useState(() => Boolean(imageSrc));
   const [hasError, setHasError] = useState(false);
 
-  const formattedPrice = new Intl.NumberFormat("es-PE", {
-    style: "currency",
-    currency: "PEN",
-  }).format(precio);
 
   return (
     <Link
@@ -71,7 +67,7 @@ export default function ProductCard({
         </h3>
 
         <p className="font-dm-sans text-base font-semibold text-neutral-700 sm:text-lg">
-          {formattedPrice}
+          S/{precio}
         </p>
       </div>
     </Link>
