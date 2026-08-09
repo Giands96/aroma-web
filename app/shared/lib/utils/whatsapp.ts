@@ -1,6 +1,5 @@
 import type { CartItem } from "@/app/shared/types";
 import { getCartItemTotal } from "@/app/shared/stores/cart.store";
-import { formatCurrency } from "./currency";
 
 interface WhatsAppTemplateValues {
   producto_name: string;
@@ -29,12 +28,12 @@ export function buildWhatsAppUrl(
     renderWhatsAppTemplate(messageTemplate, {
       producto_name: item.productName,
       producto_cantidad: String(item.quantity),
-      producto_precio: formatCurrency(item.optionPrice),
-      producto_total: formatCurrency(getCartItemTotal(item)),
-      carrito_total: formatCurrency(total),
+      producto_precio: String("S/"+item.optionPrice),
+      producto_total: String("S/"+getCartItemTotal(item)),
+      carrito_total: String("S/"+total),
     })
   );
-  const message = [...lines, "", `Total estimado: ${formatCurrency(total)}`].join("\n");
+  const message = [...lines, "", `Total estimado: ${String("S/"+total)}`].join("\n");
 
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 }
@@ -47,8 +46,8 @@ export function buildProductWhatsAppUrl(
   const message = renderWhatsAppTemplate(messageTemplate, {
     producto_name: item.productName,
     producto_cantidad: String(item.quantity),
-    producto_precio: formatCurrency(item.optionPrice),
-    producto_total: formatCurrency(getCartItemTotal(item)),
+    producto_precio: String("S/"+item.optionPrice),
+    producto_total: String("S/"+getCartItemTotal(item)),
   });
 
   return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
