@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { getWhatsAppConfig } from "@/app/shared/services/config.service";
 import WhatsAppForm from "./WhatsAppForm";
 
@@ -21,7 +23,7 @@ export default async function ConfiguracionPage() {
         </p>
       </div>
 
-      <WhatsAppForm config={config} />
+      <WhatsAppForm initialConfig={config}  />
     </div>
   );
 }
