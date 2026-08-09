@@ -5,16 +5,27 @@ import { updateWhatsAppConfigAction } from "@/app/shared/actions/config.actions"
 import type { WhatsAppConfig } from "@/app/shared/types";
 
 interface WhatsAppFormProps {
-  config: WhatsAppConfig;
+  initialConfig: WhatsAppConfig;
 }
 
-export default function WhatsAppForm({ config }: WhatsAppFormProps) {
+export default function WhatsAppForm({ initialConfig }: WhatsAppFormProps) {
   const [isPending, startTransition] = useTransition();
-  const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
 
-  const [telefono, setTelefono] = useState(config.telefono);
-  const [mensajeCarrito, setMensajeCarrito] = useState(config.mensaje_carrito);
-  const [mensajeProducto, setMensajeProducto] = useState(config.mensaje_producto);
+  const [telefono, setTelefono] = useState(
+    () => initialConfig.telefono,
+  );
+
+  const [mensajeCarrito, setMensajeCarrito] = useState(
+    () => initialConfig.mensaje_carrito,
+  );
+
+  const [mensajeProducto, setMensajeProducto] = useState(
+    () => initialConfig.mensaje_producto,
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
