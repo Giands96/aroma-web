@@ -17,10 +17,7 @@ export default function ProductCard({
   price,
   slug,
 }: ProductProps) {
-  const formattedPrice = new Intl.NumberFormat("es-PE", {
-    style: "currency",
-    currency: "PEN",
-  }).format(price);
+  
 
   return (
     <article className="flex flex-col items-center justify-between gap-0 md:gap-6 border-t border-hard-brown md:flex-row ">
@@ -40,7 +37,7 @@ export default function ProductCard({
         <div className="mt-3 flex flex-col gap-6">
           <p className="font-dm-sans text-xl text-hard-brown">{description}</p>
 
-          <p className="text-xl font-bold text-hard-brown">{formattedPrice}</p>
+          <p className="text-xl font-bold text-hard-brown">S/{price}</p>
 
           <Link
             href={`/producto/${encodeURIComponent(slug)}`}
