@@ -17,8 +17,8 @@ export default function PersonalizacionHero({title = "Personalización"}: Person
     >
       <div
         className="
-          mx-auto flex min-h-[calc(100svh-7rem)]
-          w-full max-w-[1600px]
+           flex min-h-[calc(100svh-7rem)]
+          w-full 
           flex-col items-center justify-center
           text-center
         "
@@ -37,9 +37,9 @@ export default function PersonalizacionHero({title = "Personalización"}: Person
 
           <h1 id="personalization-hero-title" className="
               mt-4 font-mileast
-              text-[clamp(3.7rem,10vw,10rem)]
+              text-5xl md:text-[10rem] 
               font-normal leading-[0.82]
-              tracking-[-0.055em]
+              tracking-[-0.055em] uppercase 
             "
           >{title}
           </h1>
@@ -66,9 +66,9 @@ export default function PersonalizacionHero({title = "Personalización"}: Person
             alt="Vela Aroma personalizada"
             width={700}
             height={700}
-            sizes="(max-width: 767px) 72vw, 500px"
+            sizes="(max-width: 767px) 92vw, 500px"
             className="
-              h-auto w-[min(72vw,390px)]
+              h-auto w-[min(92vw,390px)]
               object-contain
               md:w-[min(42vw,500px)]
             "

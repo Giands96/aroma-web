@@ -18,7 +18,8 @@
   --color-light-brown: var(--light-brown);
   --color-hard-brown: var(--hard-brown);
   --color-subtitle: var(--subtitle);
-  --animate-fadeInRight: fadeInRight 1.5s ease-in-out;
+  --animate-fadeInRight: fadeInRight 1s ease-in-out;
+  --animate-fadeInUp: fadeInUp 1s ease-in-out;
 }
 
 html,body {
@@ -55,32 +56,45 @@ body {
   }
 }
 
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
 @keyframes page-exit {
   from {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 
   to {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateX(-144px);
   }
 }
 
 @keyframes page-enter {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateX(144px);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 
 ::view-transition-old(.page-transition) {
-  animation: page-exit 180ms ease-in both;
+  animation: page-exit 300ms ease-in both;
 }
 
 ::view-transition-new(.page-transition) {

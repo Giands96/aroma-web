@@ -41,7 +41,7 @@ export default function Hero() {
           </div>
 
           {/* Descripción y CTA */}
-          <div className="flex flex-col justify-end lg:col-span-3 lg:border-l lg:border-white/60 lg:pl-7">
+          <div className="animate-fadeInUp flex flex-col justify-end lg:col-span-3 lg:border-l lg:border-white/60 lg:pl-7">
             <p className="max-w-sm font-dm-sans text-base leading-7 sm:text-lg">
               Velas artesanales creadas para iluminar y conservar tus momentos
               más especiales.
