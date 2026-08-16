@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, type CSSProperties, type ReactNode } from 'react';
+import { useLayoutEffect, useMemo, useRef, type CSSProperties, type ReactNode } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -86,14 +86,22 @@ const FoldText = ({
           className="fold-text-segment"
           data-fold-split={split}
           key={key}
-          style={{ '--fold-perspective': `${safePerspective}px` } as CSSProperties}
+          style={
+            { "--fold-perspective": `${safePerspective}px` } as CSSProperties
+          }
         >
           <span
             className="fold-text-piece"
             data-fold-hinge={hinge}
-            style={{ transformOrigin: hingeConfig.origin, '--fold-crease': 0 } as CSSProperties}
+            style={
+              {
+                transformOrigin: hingeConfig.origin,
+                "--fold-crease": 0,
+                opacity: trigger === "hover" ? 1 : 0,
+              } as CSSProperties
+            }
           >
-            {content || '\u00A0'}
+            {content || "\u00A0"}
           </span>
         </span>
       );
@@ -121,7 +129,7 @@ const FoldText = ({
     });
   }, [text, splitBy, hinge, hingeConfig.origin, safePerspective]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (typeof window === 'undefined') return undefined;
 
     const root = rootRef.current;
