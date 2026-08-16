@@ -48,110 +48,37 @@ export default function ProductGallery({
   }
 
   return (
-    <div className="flex h-full flex-col">
-      {/* Imagen seleccionada */}
-      <figure
-        className="
-          relative aspect-[4/5]
-          w-full overflow-hidden
-          bg-hard-brown/5
-          md:flex-1 md:aspect-auto
-          md:min-h-[650px]
-        "
-      >
+    <div className="h-full">
+      <figure className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-100 md:min-h-[650px] lg:h-full lg:aspect-auto">
         <Image
           src={selectedImage.secure_url}
           alt={`${productName} - imagen ${selectedIndex + 1}`}
           fill
-          sizes="
-            (max-width: 767px) 100vw,
-            (max-width: 1279px) 58vw,
-            66vw
-          "
+          sizes="(max-width: 1024px) 100vw, 800px"
           className="object-cover object-center"
         />
 
-        {/* Índice */}
-        <div
-          className="
-            absolute bottom-0 right-0
-            border-l border-t
-            border-hard-brown/30
-            bg-[#FCFAF7]
-            px-4 py-3
-            font-dm-sans
-            text-[0.65rem]
-            tracking-[0.18em]
-            text-hard-brown
-          "
-        >
-          {String(selectedIndex + 1).padStart(2, "0")}
-          {" / "}
-          {String(images.length).padStart(2, "0")}
-        </div>
-      </figure>
+        {images.length > 1 ? (
+          <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2">
+            {images.map((image, index) => {
+              const isSelected = selectedIndex === index;
 
-      {/* Miniaturas */}
-      {images.length > 1 ? (
-        <div
-          className="
-            flex overflow-x-auto
-            border-t border-hard-brown/30
-          "
-          role="list"
-          aria-label="Imágenes del producto"
-        >
-          {images.map((image, index) => {
-            const isSelected = selectedIndex === index;
-
-            return (
-              <button
-                key={`${image.secure_url}-${index}`}
-                type="button"
-                onClick={() => setSelectedIndex(index)}
-                aria-label={`Mostrar imagen ${index + 1} de ${productName}`}
-                aria-pressed={isSelected}
-                className={`
-                  relative aspect-square
-                  w-24 shrink-0
-                  overflow-hidden
-                  border-r border-hard-brown/30
-                  transition-opacity
-                  focus-visible:z-10
-                  focus-visible:outline
-                  focus-visible:outline-2
-                  focus-visible:outline-hard-brown
-                  sm:w-28
-                  lg:w-32
-                  ${
-                    isSelected
-                      ? "opacity-100"
-                      : "opacity-55 hover:opacity-100"
-                  }
-                `}
-              >
-                <Image
-                  src={image.secure_url}
-                  alt=""
-                  fill
-                  sizes="128px"
-                  className="object-cover"
+              return (
+                <button
+                  key={`${image.secure_url}-${index}`}
+                  type="button"
+                  onClick={() => setSelectedIndex(index)}
+                  aria-label={`Ver imagen ${index + 1} de ${productName}`}
+                  aria-pressed={isSelected}
+                  className={`size-2 rounded-full shadow-sm transition-transform hover:scale-125 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+                    isSelected ? "bg-white" : "bg-white/70 hover:bg-white"
+                  }`}
                 />
-
-                {isSelected ? (
-                  <span
-                    aria-hidden="true"
-                    className="
-                      absolute inset-x-0 bottom-0
-                      h-0.5 bg-hard-brown
-                    "
-                  />
-                ) : null}
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
+              );
+            })}
+          </div>
+        ) : null}
+      </figure>
     </div>
   );
 }
