@@ -1,6 +1,9 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
+import FoldText from '@/app/shared/components/ui/FoldText';
 
 export default function Hero() {
   return (
@@ -24,19 +27,40 @@ export default function Hero() {
       />
 
       <div className="px-6 flex min-h-svh w-full flex-col py-5 sm:px-8 sm:py-6 ">
-
         {/* Contenido principal */}
         <div className="grid flex-1 grid-cols-1 content-end gap-10 py-10 lg:grid-cols-12 lg:items-end lg:gap-8 lg:py-14">
           {/* Título */}
           <div className="lg:col-span-9">
-
-            <h1
-              id="hero-title"
-              className="animate-fadeInRight max-w-[11ch] animate-fadeIn font-mileast text-[clamp(3rem,10vw,9rem)] font-normal leading-[0.78] tracking-[-0.055em] text-balance"
-            >
-              Transformando
-              <br />
-              momentos
+            <h1>
+            <FoldText
+              text="Transformando"
+              splitBy="char"
+              hinge="top"
+              trigger="mount"
+              duration={0.65}
+              stagger={0.045}
+              ease="power3.out"
+              perspective={700}
+              creaseShading={0.55}
+              fontSize={96}
+              fontWeight={500}
+              color="#f7f2e8"
+            />
+            <br />
+            <FoldText
+              text="momentos"
+              splitBy="char"
+              hinge="top"
+              trigger="mount"
+              duration={0.65}
+              stagger={0.045}
+              ease="power3.out"
+              perspective={700}
+              creaseShading={0.55}
+              fontSize={80}
+              fontWeight={500}
+              color="#f7f2e8"
+            />
             </h1>
           </div>
 
@@ -52,7 +76,6 @@ export default function Hero() {
               className="group mt-8 flex w-full items-center justify-between border-t border-white/70 pt-4 font-dm-sans text-xs uppercase tracking-[0.18em] transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               Explorar colección
-
               <MoveRight
                 aria-hidden="true"
                 className="size-5 transition-transform duration-300 group-hover:translate-x-1"
@@ -60,7 +83,6 @@ export default function Hero() {
             </Link>
           </div>
         </div>
-
       </div>
     </section>
   );
