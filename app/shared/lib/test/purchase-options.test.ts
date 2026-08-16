@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getPurchaseOptions } from "../purchase-options";
+import { createCartItem, getPurchaseOptions } from "../purchase-options";
 
 describe("Opciones de compra", () => {
   it("muestra solo opciones activas ordenadas por cantidad", () => {
@@ -44,5 +44,27 @@ describe("Opciones de compra", () => {
         precio: 65,
       },
     ]);
+  });
+
+  it("crea un item de carrito para la presentacion seleccionada", () => {
+    expect(createCartItem(
+      { id: "product-id", nombre: "Vela Aurora" },
+      {
+        id: "gift",
+        nombre: "Pack regalo",
+        cantidad: 6,
+        precio: 65,
+        activo: true,
+        product_id: "product-id",
+      }
+    )).toEqual({
+      optionId: "gift",
+      productId: "product-id",
+      productName: "Vela Aurora",
+      optionName: "Pack regalo",
+      unitsPerOption: 6,
+      optionPrice: 65,
+      quantity: 1,
+    });
   });
 });

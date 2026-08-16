@@ -1,4 +1,6 @@
 import type { ProductOption } from "@/app/shared/types/product-option.types";
+import type { CartItem } from "@/app/shared/types/cart.types";
+import type { Product } from "@/app/shared/types/product.types";
 
 export interface PurchaseOption {
   id: string;
@@ -19,5 +21,20 @@ export function getPurchaseOptions(
       cantidad,
       precio,
     }));
+}
+
+export function createCartItem(
+  product: Pick<Product, "id" | "nombre">,
+  option: ProductOption
+): CartItem {
+  return {
+    optionId: option.id,
+    productId: product.id,
+    productName: product.nombre,
+    optionName: option.nombre,
+    unitsPerOption: option.cantidad,
+    optionPrice: option.precio,
+    quantity: 1,
+  };
 }
  
