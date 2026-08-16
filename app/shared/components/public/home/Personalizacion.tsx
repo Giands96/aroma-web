@@ -137,8 +137,8 @@ export default function PersonalizationSection() {
           {/* Declaración editorial */}
           <article
             className="
-              flex min-h-[430px] flex-col justify-between
-              p-3 md:col-span-5 md:p-6
+              flex min-h-[430px] flex-col justify-center
+              p-3 md:col-span-5 md:p-6 gap-16
               lg:min-h-[580px] 
             "
           >
@@ -165,11 +165,7 @@ export default function PersonalizationSection() {
               en aroma.
             </p>
 
-            <div className="flex items-end justify-between">
-              <p className="max-w-[250px] font-dm-sans text-sm leading-5">
-                Forma, fragancia y acabado construidos como una sola pieza.
-              </p>
-            </div>
+            
           </article>
 
           {/* Imagen secundaria */}
