@@ -6,6 +6,15 @@ import { MoveRight } from "lucide-react";
 import FoldText from '@/app/shared/components/ui/FoldText';
 
 export default function Hero() {
+
+  function windowWidth(): number {
+    if (typeof window !== 'undefined') {
+      console.log('window.innerWidth:', window.innerWidth);
+      return window.innerWidth;
+    }
+    return 0;
+  } 
+
   return (
     <section
       aria-labelledby="hero-title"
@@ -42,7 +51,7 @@ export default function Hero() {
               ease="power3.out"
               perspective={700}
               creaseShading={0.55}
-              fontSize={96}
+              fontSize="clamp(56px, 8vw, 96px)"
               fontWeight={500}
               color="#f7f2e8"
             />
@@ -57,7 +66,7 @@ export default function Hero() {
               ease="power3.out"
               perspective={700}
               creaseShading={0.55}
-              fontSize={80}
+              fontSize="clamp(48px, 6.7vw, 80px)"
               fontWeight={500}
               color="#f7f2e8"
             />
