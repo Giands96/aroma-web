@@ -143,12 +143,6 @@ export default function PersonalizacionPasos() {
           </li>
         ))}
       </ol>
-
-      {/* Pie editorial */}
-      <footer className="flex flex-col gap-4 border-t border-white/30 px-6 py-6 font-dm-sans text-[0.6rem] uppercase tracking-[0.18em] text-white/60 sm:flex-row sm:items-center sm:justify-between md:px-10 lg:px-14">
-        <span>Aroma · Velas artesanales</span>
-        <span>Cada detalle cuenta</span>
-      </footer>
     </section>
   );
 }
