@@ -13,11 +13,26 @@ const loginSchema = z.object({
 export const loginAction = actionClient
   .inputSchema(loginSchema)
   .action(async ({ parsedInput }) => {
-    await signInWithEmail(
-      parsedInput.email,
-      parsedInput.password
-    );
-    redirect("/dashboard");
+    try {
+      await signInWithEmail(
+        parsedInput.email,
+        parsedInput.password
+      );
+
+      return { success: true };
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message.toLowerCase() === "invalid login credentials"
+      ) {
+        return {
+          success: false,
+          error: "El correo electrónico o la contraseña no son correctos.",
+        };
+      }
+
+      throw error;
+    }
   });
 
 export const logoutAction = actionClient.action(async () => {

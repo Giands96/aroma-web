@@ -2,10 +2,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   requireAdmin: vi.fn(),
-  clearProductImage: vi.fn(),
   deleteImageFromCloudinary: vi.fn(),
   getProductById: vi.fn(),
   revalidatePath: vi.fn(),
+  setProductImages: vi.fn(),
+  uploadImageToCloudinary: vi.fn(),
+  validateImageFile: vi.fn(),
 }));
 
 vi.mock("@/app/shared/actions/require-admin", () => ({
@@ -13,15 +15,21 @@ vi.mock("@/app/shared/actions/require-admin", () => ({
 }));
 vi.mock("@/app/shared/services/cloudinary.service", () => ({
   deleteImageFromCloudinary: mocks.deleteImageFromCloudinary,
-  uploadImageToCloudinary: vi.fn(),
+  uploadImageToCloudinary: mocks.uploadImageToCloudinary,
+}));
+vi.mock("@/app/shared/lib/validations/image.schema", () => ({
+  validateImageFile: mocks.validateImageFile,
 }));
 vi.mock("@/app/shared/services/products.service", () => ({
-  clearProductImage: mocks.clearProductImage,
   getProductById: mocks.getProductById,
+  setProductImages: mocks.setProductImages,
 }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 
-import { deleteProductImageAction } from "./cloudinary.actions";
+import {
+  deleteProductImageAction,
+  uploadProductImageAction,
+} from "./cloudinary.actions";
 
 describe("deleteProductImageAction", () => {
   beforeEach(() => {
@@ -33,8 +41,10 @@ describe("deleteProductImageAction", () => {
     mocks.getProductById.mockResolvedValue({
       id: "11111111-1111-4111-8111-111111111111",
       imagen_public_id: "aroma/products/vela-aurora",
+      imagen_url: "https://res.cloudinary.com/example/vela-aurora.jpg",
+      imagenes: [],
     });
-    mocks.clearProductImage.mockResolvedValue({
+    mocks.setProductImages.mockResolvedValue({
       id: "11111111-1111-4111-8111-111111111111",
       slug: "vela-aurora",
     });
@@ -44,12 +54,41 @@ describe("deleteProductImageAction", () => {
     });
 
     expect(result.data).toBeUndefined();
-    expect(mocks.clearProductImage).toHaveBeenCalledWith(
+    expect(mocks.setProductImages).toHaveBeenCalledWith(
       "11111111-1111-4111-8111-111111111111",
-      "aroma/products/vela-aurora"
+      []
     );
     expect(mocks.deleteImageFromCloudinary).toHaveBeenCalledWith(
       "aroma/products/vela-aurora"
     );
+  });
+});
+
+describe("uploadProductImageAction", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    mocks.requireAdmin.mockResolvedValue({ id: "admin-id" });
+  });
+
+  it("uploads directly to Cloudinary without a staging table", async () => {
+    const file = new File(["image"], "vela.png", { type: "image/png" });
+    mocks.validateImageFile.mockResolvedValue({
+      buffer: Buffer.from("image"),
+      mime: "image/png",
+      extension: "png",
+      width: 1200,
+      height: 1200,
+    });
+    mocks.uploadImageToCloudinary.mockResolvedValue({
+      publicId: "aroma/products/vela",
+      secureUrl: "https://res.cloudinary.com/example/vela.jpg",
+    });
+
+    const result = await uploadProductImageAction({ file });
+
+    expect(result.data).toEqual({
+      publicId: "aroma/products/vela",
+      secureUrl: "https://res.cloudinary.com/example/vela.jpg",
+    });
   });
 });

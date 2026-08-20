@@ -1,8 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
-import {NextResponse, type NextRequest} from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 
-export async function updateSession(request: NextRequest,): Promise<NextResponse> {
-  // Definimos response como una variable mutable cuyo valor inicial es 
+function redirectWithCookies(response: NextResponse, destination: URL) {
+  const redirectResponse = NextResponse.redirect(destination);
+  response.cookies.getAll().forEach((cookie) => {
+    redirectResponse.cookies.set(cookie);
+  });
+  return redirectResponse;
+}
+
+export async function updateSession(request: NextRequest): Promise<NextResponse> {
   let response = NextResponse.next({
     request,
   });
@@ -54,7 +61,21 @@ export async function updateSession(request: NextRequest,): Promise<NextResponse
     },
   );
 
-  await supabase.auth.getClaims();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const pathname = request.nextUrl.pathname;
+  const isDashboardRoute =
+    pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+
+  if (isDashboardRoute && !user) {
+    return redirectWithCookies(response, new URL("/login", request.url));
+  }
+
+  const isAuthorizationError = request.nextUrl.searchParams.has("error");
+  if (pathname === "/login" && user && !isAuthorizationError) {
+    return redirectWithCookies(response, new URL("/dashboard", request.url));
+  }
 
   return response;
 }

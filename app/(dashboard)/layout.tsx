@@ -1,14 +1,17 @@
 import { redirect } from "next/navigation";
-import { getCurrentUser } from "../shared/services/auth.service";
+import { requireAdmin } from "@/app/shared/actions/require-admin";
+import DashboardShell from "./dashboard/_components/DashboardShell";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-  if(!user) {
-    redirect("/login");
+  try {
+    await requireAdmin();
+  } catch {
+    redirect("/login?error=admin");
   }
-  return <>{children}</>;
+
+  return <DashboardShell>{children}</DashboardShell>;
 }

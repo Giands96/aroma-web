@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Inter, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { ViewTransition } from "react";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -39,7 +40,11 @@ export default function RootLayout({
       lang="en"
       className={`${mileast.variable} ${inter.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <ViewTransition default="page-transition">
+          {children}
+        </ViewTransition>
+      </body>
     </html>
   );
 }
