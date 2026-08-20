@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
 
 
-export default function DashboardDestacadosPage() {
-  return null;
+
+export function DashboardDestacados() {
+
+    
 }
