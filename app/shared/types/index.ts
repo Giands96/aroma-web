@@ -6,4 +6,5 @@ export interface WhatsAppConfig {
 }
 
 export type { CartItem, CartLimits } from "./cart.types";
+export type { FeaturedProduct } from "./featured-product.types";
 export type { ProductOption } from "./product-option.types";

@@ -8,9 +8,7 @@ import { getWhatsAppConfig } from "@/app/shared/services/config.service";
 import ProductPurchaseActions from "@/app/shared/components/public/coleccion/ProductPurchaseActions";
 import ProductGallery from "@/app/shared/components/public/coleccion/ProductGallery";
 
-export default async function Page({
-  params,
-}: {
+export default async function Page({params}: {
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
@@ -38,7 +36,7 @@ export default async function Page({
 
         <section className="grid gap-8 lg:grid-cols-[minmax(0,800px)_minmax(320px,1fr)] lg:items-center lg:gap-12">
           {/* Galería */}
-          <div className="w-full max-w-[800px] lg:self-stretch">
+          <div className="w-full max-w-200 lg:self-stretch">
             <ProductGallery images={imagenes} productName={product.nombre} />
           </div>
 

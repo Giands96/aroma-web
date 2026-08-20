@@ -3,6 +3,7 @@ import { createClient } from "@/app/shared/lib/supabase/server";
 import type { ProductOptionInput } from "@/app/shared/lib/validations/product-option.schema";
 import type { ProductImage } from "@/app/shared/lib/validations/product-image.schema";
 import type { Product } from "@/app/shared/types/product.types";
+import type { FeaturedProduct } from "@/app/shared/types";
 
 export interface ProductWriteInput {
   nombre: string;
@@ -250,4 +251,25 @@ export async function deleteProduct(id: string): Promise<void> {
   const { error } = await supabase.from("products").delete().eq("id", id);
 
   if (error) throw error;
+}
+
+export async function createFeaturedProduct(productId: string): Promise<void> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("featured_products").insert({ product_id: productId });
+  if (error) throw error;
+}
+
+export async function getFeaturedProducts(): Promise<FeaturedProduct[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("featured_products")
+    .select(
+      "id, created_at, product_id, posicion, products(slug, nombre, descripcion, imagen_public_id, imagen_url,product_options!inner(precio))",
+    )
+    .eq("products.activo", true)
+    .order("posicion", { ascending: true })
+    .limit(3);
+
+  if (error) throw error;
+  return data as unknown as FeaturedProduct[];
 }
