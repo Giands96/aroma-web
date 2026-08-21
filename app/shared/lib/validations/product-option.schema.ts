@@ -20,9 +20,4 @@ export const productOptionUpdateSchema = z.strictObject({
   activo: z.boolean().optional(),
 });
 
-export const productOptionWithIdSchema = productOptionSchema.extend({
-  id: z.uuid(),
-  product_id: z.uuid(),
-});
-
 export type ProductOptionInput = z.infer<typeof productOptionSchema>;

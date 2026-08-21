@@ -14,8 +14,4 @@ export const productUpdateSchema = z.strictObject({
   activo: z.boolean().optional(),
 });
 
-export const productWithIdSchema = productSchema.extend({
-  id: z.uuid(),
-});
-
 export type ProductInput = z.infer<typeof productSchema>;
