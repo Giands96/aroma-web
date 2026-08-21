@@ -8,6 +8,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { getProductImages } from "@/app/shared/lib/utils/product-images";
 import type { Product } from "@/app/shared/types/product.types";
 import { deleteProductAction } from "@/app/shared/actions/products.actions";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 interface ProductListProps {
   products: Product[];
@@ -73,7 +74,7 @@ export default function ProductList({ products }: ProductListProps) {
                 <td className="px-4 py-3">
                   <div className="flex items-center justify-end gap-2">
                     <Link
-                      href={`/dashboard/productos/${product.id}/editar`}
+                      href={ROUTES.DASHBOARD.EDIT_PRODUCT(product.id)}
                       className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
                       aria-label={`Editar ${product.nombre}`}
                     >
@@ -121,7 +122,7 @@ export default function ProductList({ products }: ProductListProps) {
               </div>
               <div className="flex flex-col gap-1">
                 <Link
-                  href={`/dashboard/productos/${product.id}/editar`}
+                  href={ROUTES.DASHBOARD.EDIT_PRODUCT(product.id)}
                   className="flex min-h-11 min-w-11 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-950"
                   aria-label={`Editar ${product.nombre}`}
                 >
