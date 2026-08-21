@@ -14,6 +14,7 @@ import {
   getProductById,
   setProductImages,
 } from "@/app/shared/services/products.service";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 const uploadImageInputSchema = z.object({
   file: z.instanceof(File, { message: "Se requiere una imagen." }),
@@ -55,16 +56,18 @@ export const deleteProductImageAction = actionClient
       : [];
     const clearedProduct = await setProductImages(product.id, nextImages);
     if (clearedProduct) {
-      revalidatePath("/coleccion");
-      revalidatePath(`/coleccion/producto/${clearedProduct.slug}`);
-      revalidatePath("/dashboard/productos");
+      revalidatePath(ROUTES.COLECCION);
+      revalidatePath(ROUTES.PRODUCT(clearedProduct.slug));
+      revalidatePath(ROUTES.DASHBOARD.PRODUCTS);
     }
 
-    for (const image of imagesToDelete) {
-      try {
-        await deleteImageFromCloudinary(image.public_id);
-      } catch (error) {
-        console.error("Failed to delete product image from Cloudinary", error);
-      }
-    }
+    await Promise.all(
+      imagesToDelete.map(async (image) => {
+        try {
+          await deleteImageFromCloudinary(image.public_id);
+        } catch (error) {
+          console.error("Failed to delete product image from Cloudinary", error);
+        }
+      })
+    );
   });

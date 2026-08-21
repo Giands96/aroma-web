@@ -62,6 +62,48 @@ describe("deleteProductImageAction", () => {
       "aroma/products/vela-aurora"
     );
   });
+
+  it("starts independent Cloudinary deletions together", async () => {
+    const resolvers: Array<() => void> = [];
+    mocks.getProductById.mockResolvedValue({
+      id: "11111111-1111-4111-8111-111111111111",
+      slug: "vela-aurora",
+      imagenes: [
+        {
+          public_id: "aroma/products/vela-aurora-front",
+          secure_url: "https://res.cloudinary.com/example/vela-aurora-front.jpg",
+        },
+        {
+          public_id: "aroma/products/vela-aurora-back",
+          secure_url: "https://res.cloudinary.com/example/vela-aurora-back.jpg",
+        },
+      ],
+    });
+    mocks.setProductImages.mockResolvedValue({
+      id: "11111111-1111-4111-8111-111111111111",
+      slug: "vela-aurora",
+    });
+    mocks.deleteImageFromCloudinary.mockImplementation(
+      () => new Promise<void>((resolve) => resolvers.push(resolve))
+    );
+
+    const result = deleteProductImageAction({
+      productId: "11111111-1111-4111-8111-111111111111",
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(mocks.deleteImageFromCloudinary).toHaveBeenCalled();
+      });
+      expect(mocks.deleteImageFromCloudinary).toHaveBeenCalledTimes(2);
+    } finally {
+      while (resolvers.length > 0) {
+        resolvers.splice(0).forEach((resolve) => resolve());
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+      await result;
+    }
+  });
 });
 
 describe("uploadProductImageAction", () => {

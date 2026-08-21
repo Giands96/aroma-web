@@ -106,6 +106,55 @@ describe("product actions", () => {
     );
   });
 
+  it("starts all gallery file validations before any one completes", async () => {
+    const firstFile = new File(["first"], "first.png", { type: "image/png" });
+    const secondFile = new File(["second"], "second.png", { type: "image/png" });
+    const resolvers: Array<() => void> = [];
+    mocks.validateImageFile.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolvers.push(() =>
+            resolve({
+              buffer: Buffer.from("image"),
+              mime: "image/png",
+              extension: "png",
+              width: 1200,
+              height: 1200,
+            })
+          );
+        })
+    );
+    mocks.uploadImageToCloudinary.mockResolvedValue({
+      publicId: "aroma/products/vela-aurora",
+      secureUrl: "https://res.cloudinary.com/example/vela-aurora.jpg",
+    });
+    mocks.createProductWithOptions.mockResolvedValue({ id: productId, slug: "vela-aurora" });
+
+    const result = createProductAction({
+      nombre: "Vela Aurora",
+      slug: "vela-aurora",
+      descripcion: "Una vela artesanal para espacios cálidos y tranquilos.",
+      options: [{ nombre: "Unidad", cantidad: 1, precio: 12.5 }],
+      image_entries: [
+        { type: "file", file: firstFile },
+        { type: "file", file: secondFile },
+      ],
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(mocks.validateImageFile).toHaveBeenCalled();
+      });
+      expect(mocks.validateImageFile).toHaveBeenCalledTimes(2);
+    } finally {
+      while (resolvers.length > 0) {
+        resolvers.splice(0).forEach((resolve) => resolve());
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+      await result;
+    }
+  });
+
   it("rejects an active product update without active options", async () => {
     mocks.getProductById.mockResolvedValue({
       id: productId,
@@ -172,6 +221,49 @@ describe("product actions", () => {
       })
     );
     expect(mocks.deleteImageFromCloudinary).toHaveBeenCalledWith(oldImage.public_id);
+  });
+
+  it("starts independent removed-image deletions together", async () => {
+    const oldImages = [
+      {
+        public_id: "aroma/products/old-front",
+        secure_url: "https://res.cloudinary.com/example/old-front.jpg",
+      },
+      {
+        public_id: "aroma/products/old-back",
+        secure_url: "https://res.cloudinary.com/example/old-back.jpg",
+      },
+    ];
+    const resolvers: Array<() => void> = [];
+    mocks.getProductById.mockResolvedValue({
+      id: productId,
+      slug: "vela-aurora",
+      activo: true,
+      imagenes: oldImages,
+    });
+    mocks.updateProduct.mockResolvedValue({
+      id: productId,
+      slug: "vela-aurora",
+      imagenes: [],
+    });
+    mocks.deleteImageFromCloudinary.mockImplementation(
+      () => new Promise<void>((resolve) => resolvers.push(resolve))
+    );
+
+    const result = updateProductAction({ id: productId, image_entries: [] });
+
+    try {
+      await vi.waitFor(() => {
+        expect(mocks.deleteImageFromCloudinary).toHaveBeenCalled();
+      });
+      expect(mocks.deleteImageFromCloudinary).toHaveBeenCalledTimes(2);
+    } finally {
+      while (resolvers.length > 0) {
+        resolvers.splice(0).forEach((resolve) => resolve());
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+      await result;
+    }
   });
 
   it("cleans uploaded Cloudinary images when product creation fails", async () => {
