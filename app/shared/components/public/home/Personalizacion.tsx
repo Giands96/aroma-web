@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 export default function PersonalizationSection() {
   return (
@@ -112,7 +113,7 @@ export default function PersonalizationSection() {
             </div>
 
             <Link
-              href="/personalizacion"
+               href={ROUTES.PERSONALIZACION}
               className="
                 group flex items-center justify-between
                 border-t border-hard-brown pt-4
@@ -243,7 +244,7 @@ export default function PersonalizationSection() {
 
           {/* CTA */}
           <Link
-            href="/personalizacion"
+             href={ROUTES.PERSONALIZACION}
             className="
               group flex min-h-[270px] flex-col justify-between
               p-6 md:col-span-3 md:p-8
@@ -271,7 +272,7 @@ export default function PersonalizationSection() {
               <MoveRight
                 aria-hidden="true"
                 className="
-                  size-10 transition-colors-transformation duration-300
+                  size-10 transition-[color,background-color,transform] duration-300
                   group-hover:translate-x-2 p-2 border rounded-full group-hover:bg-hard-brown group-hover:text-white 
                 "
               />

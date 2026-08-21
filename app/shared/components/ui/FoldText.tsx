@@ -42,13 +42,23 @@ const HINGE_CONFIG: Record<Hinge, HingeConfig> = {
 
 const clamp = (value: number, min: number, max: number): number => Math.min(max, Math.max(min, value));
 
+const withTextPositionKeys = (parts: Iterable<string>) => {
+  let position = 0;
+
+  return Array.from(parts, (value) => {
+    const key = `${position}:${value}`;
+    position += value.length;
+    return { value, key };
+  });
+};
+
 const renderWhitespace = (value: string, key: string): ReactNode[] =>
-  value.split(/(\n)/).map((part, index) => {
-    if (part === '\n') return <br key={`${key}-br-${index}`} />;
+  withTextPositionKeys(value.split(/(\n)/)).map(({ value: part, key: partKey }) => {
+    if (part === '\n') return <br key={`${key}-br-${partKey}`} />;
     if (!part) return null;
 
     return (
-      <span className="fold-text-whitespace" key={`${key}-space-${index}`}>
+      <span className="fold-text-whitespace" key={`${key}-space-${partKey}`}>
         {part.replace(/ /g, '\u00A0')}
       </span>
     );
@@ -77,10 +87,7 @@ const FoldText = ({
   const safePerspective = Math.max(120, perspective);
 
   const segments = useMemo(() => {
-    let segmentIndex = 0;
-
     const renderSegment = (content: string, key: string, split: SplitBy = splitBy): ReactNode => {
-      segmentIndex += 1;
       return (
         <span
           className="fold-text-segment"
@@ -108,26 +115,26 @@ const FoldText = ({
     };
 
     if (splitBy === 'line') {
-      return text.split('\n').map((line, index) => (
-        <span className="fold-text-line" key={`line-${index}`}>
-          {renderSegment(line || '\u00A0', `segment-line-${index}`, 'line')}
+      return withTextPositionKeys(text.split('\n')).map(({ value: line, key }) => (
+        <span className="fold-text-line" key={`line-${key}`}>
+          {renderSegment(line || '\u00A0', `segment-line-${key}`, 'line')}
         </span>
       ));
     }
 
     if (splitBy === 'word') {
-      return text.split(/(\s+)/).flatMap((part, index) => {
+      return withTextPositionKeys(text.split(/(\s+)/)).flatMap(({ value: part, key }) => {
         if (!part) return [];
-        if (/^\s+$/.test(part)) return renderWhitespace(part, `ws-${index}`);
-        return renderSegment(part, `segment-word-${segmentIndex}`);
+        if (/^\s+$/.test(part)) return renderWhitespace(part, `ws-${key}`);
+        return renderSegment(part, `segment-word-${key}`);
       });
     }
 
-    return Array.from(text).map((char, index) => {
-      if (char === '\n') return <br key={`br-${index}`} />;
-      return renderSegment(char === ' ' ? '\u00A0' : char, `segment-char-${index}`);
+    return withTextPositionKeys(Array.from(text)).map(({ value: char, key }) => {
+      if (char === '\n') return <br key={`br-${key}`} />;
+      return renderSegment(char === ' ' ? '\u00A0' : char, `segment-char-${key}`);
     });
-  }, [text, splitBy, hinge, hingeConfig.origin, safePerspective]);
+  }, [text, splitBy, hinge, hingeConfig.origin, safePerspective, trigger]);
 
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return undefined;

@@ -2,6 +2,7 @@ import Link from "next/link";
 import ProductCard from "./ProductCard";
 import type { Product } from "@/app/shared/types/product.types";
 import { getProductImages } from "@/app/shared/lib/utils/product-images";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 interface ProductGridProps {
   products: Product[];
@@ -50,7 +51,7 @@ export default function ProductGrid({
           >
             {currentPage > 1 ? (
               <Link
-                href={`/coleccion?page=${currentPage - 1}`}
+                href={ROUTES.COLECCION_PAGE(currentPage - 1)}
                 className="rounded-full border border-hard-brown px-5 py-2 font-dm-sans text-hard-brown transition-colors hover:bg-hard-brown hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hard-brown"
               >
                 Anterior
@@ -70,7 +71,7 @@ export default function ProductGrid({
 
             {currentPage < totalPages ? (
               <Link
-                href={`/coleccion?page=${currentPage + 1}`}
+                href={ROUTES.COLECCION_PAGE(currentPage + 1)}
                 className="rounded-full bg-hard-brown px-5 py-2 font-dm-sans text-white transition-colors hover:bg-hard-brown/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hard-brown"
               >
                 Siguiente
