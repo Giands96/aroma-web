@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeClosed } from "lucide-react";
 import { loginAction } from "@/app/shared/actions/auth.actions";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -14,7 +15,7 @@ export default function LoginPage() {
   const { execute, result, isExecuting } = useAction(loginAction, {
     onSuccess: ({ data }) => {
       if (data.success) {
-        router.replace("/dashboard");
+        router.replace(ROUTES.DASHBOARD.HOME);
       }
     },
   });

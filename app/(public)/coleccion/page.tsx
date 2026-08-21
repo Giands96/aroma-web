@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import HeroImage from "@public/collection-hero.png"
 import ProductGrid from './../../shared/components/public/coleccion/ProductGrid';
 import { getProductsPage } from "@/app/shared/services/products.service";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 const PRODUCTS_PER_PAGE = 8;
 
@@ -20,7 +21,7 @@ export default async function ColeccionPage({ searchParams }: ColeccionPageProps
     const totalPages = Math.max(1, Math.ceil(total / PRODUCTS_PER_PAGE));
 
     if (currentPage > totalPages) {
-        redirect(`/coleccion?page=${totalPages}`);
+        redirect(ROUTES.COLECCION_PAGE(totalPages));
     }
 
     return (

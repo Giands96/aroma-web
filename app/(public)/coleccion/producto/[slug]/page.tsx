@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { getWhatsAppConfig } from "@/app/shared/services/config.service";
 import ProductPurchaseActions from "@/app/shared/components/public/coleccion/ProductPurchaseActions";
 import ProductGallery from "@/app/shared/components/public/coleccion/ProductGallery";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 export default async function Page({params}: {
   params: Promise<{ slug: string }>;
@@ -27,7 +28,7 @@ export default async function Page({params}: {
       <div className="mx-auto w-full max-w-[1440px] p-3 md:px-6 md:py-6">
         {/* Volver */}
         <Link
-          href="/coleccion"
+          href={ROUTES.COLECCION}
           className="mb-6 inline-flex items-center gap-2 font-dm-sans text-sm text-neutral-500 transition-colors hover:text-neutral-900"
         >
           <ArrowLeft className="size-4" />
