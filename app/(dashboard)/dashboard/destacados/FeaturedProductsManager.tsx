@@ -160,7 +160,7 @@ export default function FeaturedProductsManager({
                     <h3 className="truncate font-dm-sans text-sm font-medium text-zinc-950">
                       {product?.nombre ?? "Producto no disponible"}
                     </h3>
-                    <p className="mt-1 line-clamp-2 font-dm-sans text-xs leading-5 text-zinc-500">
+                    <p className="mt-1 line-clamp-2 h-6 font-dm-sans text-xs leading-5 text-zinc-500">
                       {product?.descripcion ?? "Este producto ya no está disponible."}
                     </p>
                   </div>
