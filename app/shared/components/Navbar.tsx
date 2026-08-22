@@ -11,7 +11,6 @@ const navigationItems = [
   { label: "Inicio", href: ROUTES.HOME },
   { label: "Colección", href: ROUTES.COLECCION },
   { label: "Personalización", href: ROUTES.PERSONALIZACION },
-  { label: "Contacto", href: ROUTES.CONTACTO },
 ] as const;
 
 export default function Navbar() {
