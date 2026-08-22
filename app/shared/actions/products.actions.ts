@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import {
   assertActiveProductHasOption,
@@ -26,6 +26,7 @@ import {
   uploadImageToCloudinary,
 } from "@/app/shared/services/cloudinary.service";
 import {
+  PUBLIC_PRODUCTS_CACHE_TAG,
   createProductWithOptions,
   deleteProduct,
   getProductById,
@@ -156,6 +157,7 @@ export const createProductAction = actionClient.inputSchema(createProductInputSc
     }
 
     revalidateProductPaths(savedProduct.slug);
+    revalidateTag(PUBLIC_PRODUCTS_CACHE_TAG, "max");
     return savedProduct;
   });
 
@@ -203,6 +205,7 @@ export const updateProductAction = actionClient
 
     revalidateProductPaths(currentProduct.slug);
     revalidateProductPaths(savedProduct.slug);
+    revalidateTag(PUBLIC_PRODUCTS_CACHE_TAG, "max");
     return savedProduct;
   });
 
@@ -219,4 +222,5 @@ export const deleteProductAction = actionClient
     await deleteImages(getProductImages(product));
 
     revalidateProductPaths(product.slug);
+    revalidateTag(PUBLIC_PRODUCTS_CACHE_TAG, "max");
   });

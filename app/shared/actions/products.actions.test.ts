@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   getProductById: vi.fn(),
   requireAdmin: vi.fn(),
   revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
   setProductImages: vi.fn(),
   uploadImageToCloudinary: vi.fn(),
   validateImageFile: vi.fn(),
@@ -17,6 +18,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/app/shared/actions/require-admin", () => ({ requireAdmin: mocks.requireAdmin }));
 vi.mock("@/app/shared/services/products.service", () => ({
+  PUBLIC_PRODUCTS_CACHE_TAG: "public-products",
   createProductWithOptions: mocks.createProductWithOptions,
   deleteProduct: mocks.deleteProduct,
   getProductById: mocks.getProductById,
@@ -34,9 +36,16 @@ vi.mock("@/app/shared/services/cloudinary.service", () => ({
 vi.mock("@/app/shared/lib/validations/image.schema", () => ({
   validateImageFile: mocks.validateImageFile,
 }));
-vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
+vi.mock("next/cache", () => ({
+  revalidatePath: mocks.revalidatePath,
+  revalidateTag: mocks.revalidateTag,
+}));
 
-import { createProductAction, updateProductAction } from "./products.actions";
+import {
+  createProductAction,
+  deleteProductAction,
+  updateProductAction,
+} from "./products.actions";
 
 const productId = "11111111-1111-4111-8111-111111111111";
 const optionId = "22222222-2222-4222-8222-222222222222";
@@ -60,6 +69,46 @@ describe("product actions", () => {
 
     expect(result.data).toEqual(product);
     expect(mocks.createProductWithOptions).toHaveBeenCalledOnce();
+  });
+
+  it("revalidates the public catalog after creating a product", async () => {
+    mocks.createProductWithOptions.mockResolvedValue({ id: productId, slug: "vela-aurora" });
+
+    await createProductAction({
+      nombre: "Vela Aurora",
+      slug: "vela-aurora",
+      descripcion: "Una vela artesanal para espacios cálidos y tranquilos.",
+      options: [{ nombre: "Unidad", cantidad: 1, precio: 12.5 }],
+    });
+
+    expect(mocks.revalidateTag).toHaveBeenCalledWith("public-products", "max");
+  });
+
+  it("revalidates the public catalog after updating a product", async () => {
+    mocks.getProductById.mockResolvedValue({
+      id: productId,
+      slug: "vela-aurora",
+      activo: true,
+      imagenes: [],
+    });
+    mocks.updateProduct.mockResolvedValue({ id: productId, slug: "vela-aurora" });
+
+    await updateProductAction({ id: productId, nombre: "Vela Aurora renovada" });
+
+    expect(mocks.revalidateTag).toHaveBeenCalledWith("public-products", "max");
+  });
+
+  it("revalidates the public catalog after deleting a product", async () => {
+    mocks.getProductById.mockResolvedValue({
+      id: productId,
+      slug: "vela-aurora",
+      imagenes: [],
+    });
+    mocks.deleteProduct.mockResolvedValue(undefined);
+
+    await deleteProductAction({ id: productId });
+
+    expect(mocks.revalidateTag).toHaveBeenCalledWith("public-products", "max");
   });
 
   it("uploads local image files before saving the product gallery", async () => {

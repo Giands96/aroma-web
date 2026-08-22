@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { requireAdmin } from "@/app/shared/actions/require-admin";
 import { actionClient } from "@/app/shared/lib/safe-action";
 import {
@@ -8,6 +8,7 @@ import {
   whatsappConfigSchema,
 } from "@/app/shared/lib/validations/config.schema";
 import {
+  PUBLIC_WHATSAPP_CONFIG_CACHE_TAG,
   updateCartLimits,
   updateWhatsAppConfig,
 } from "@/app/shared/services/config.service";
@@ -18,8 +19,8 @@ export const updateWhatsAppConfigAction = actionClient
   .action(async ({ parsedInput }) => {
     await requireAdmin();
     const config = await updateWhatsAppConfig(parsedInput);
+    revalidateTag(PUBLIC_WHATSAPP_CONFIG_CACHE_TAG, "max");
     revalidatePath(ROUTES.DASHBOARD.CONFIGURATION);
-    revalidatePath(ROUTES.CART);
     return config;
   });
 
