@@ -4,17 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
 import FoldText from '@/app/shared/components/ui/FoldText';
+import { ROUTES } from "@/app/shared/routes/routes";
 
 export default function Hero() {
-
-  function windowWidth(): number {
-    if (typeof window !== 'undefined') {
-      console.log('window.innerWidth:', window.innerWidth);
-      return window.innerWidth;
-    }
-    return 0;
-  } 
-
   return (
     <section
       aria-labelledby="hero-title"
@@ -81,7 +73,7 @@ export default function Hero() {
             </p>
 
             <Link
-              href="/coleccion"
+              href={ROUTES.COLECCION}
               className="group mt-8 flex w-full items-center justify-between border-t border-white/70 pt-4 font-dm-sans text-xs uppercase tracking-[0.18em] transition-opacity hover:opacity-70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
               Explorar colección

@@ -1,10 +1,6 @@
-export interface OptionDraft {
-  id?: string;
-  nombre: string;
-  cantidad: string;
-  precio: string;
-  activo: boolean;
-}
+import type { OptionDraft } from "./product-option-drafts";
+
+export type { OptionDraft } from "./product-option-drafts";
 
 interface GeneralInfoSectionProps {
   nombre: string;
@@ -116,7 +112,7 @@ interface ProductOptionsSectionProps {
   onRemove: (index: number) => void;
   onUpdate: (
     index: number,
-    field: keyof Omit<OptionDraft, "id">,
+    field: keyof Omit<OptionDraft, "id" | "uiKey">,
     value: string | boolean
   ) => void;
 }
@@ -144,7 +140,7 @@ export function ProductOptionsSection({
 
       <div className="space-y-3">
         {options.map((option, index) => (
-          <div key={option.id} className="space-y-3 rounded-md border border-zinc-200 p-4">
+          <div key={option.uiKey} className="space-y-3 rounded-md border border-zinc-200 p-4">
             <div className="flex items-center justify-between">
               <span className="font-dm-sans text-xs font-medium text-hard-brown/60">
                 Opción {index + 1}

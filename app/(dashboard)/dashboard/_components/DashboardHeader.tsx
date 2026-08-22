@@ -3,13 +3,15 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
-import { Home, Package, Settings, LogOut } from "lucide-react";
+import { Home, Package, Settings, Star, LogOut } from "lucide-react";
 import { logoutAction } from "@/app/shared/actions/auth.actions";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 const navItems = [
-  { href: "/dashboard", label: "Inicio", icon: Home },
-  { href: "/dashboard/productos", label: "Productos", icon: Package },
-  { href: "/dashboard/configuracion", label: "Configuración", icon: Settings },
+  { href: ROUTES.DASHBOARD.HOME, label: "Inicio", icon: Home },
+  { href: ROUTES.DASHBOARD.PRODUCTS, label: "Productos", icon: Package },
+  { href: ROUTES.DASHBOARD.FEATURED, label: "Destacados", icon: Star },
+  { href: ROUTES.DASHBOARD.CONFIGURATION, label: "Configuración", icon: Settings },
 ];
 
 export default function DashboardHeader() {
@@ -22,7 +24,7 @@ export default function DashboardHeader() {
       <aside className="fixed inset-y-0 hidden w-64 flex-col border-r border-zinc-200 bg-white md:flex">
         <div className="flex h-16 items-center border-b border-zinc-200 px-6">
           <Link
-            href="/dashboard"
+            href={ROUTES.DASHBOARD.HOME}
             className="font-mileast text-xl text-zinc-950"
           >
             Aroma

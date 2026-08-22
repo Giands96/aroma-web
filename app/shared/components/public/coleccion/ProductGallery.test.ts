@@ -8,8 +8,8 @@ describe("ProductGallery", () => {
     const markup = renderToStaticMarkup(createElement(ProductGallery, {
       productName: "Vela Aurora",
       images: [
-        { secure_url: "https://example.com/first.jpg" },
-        { secure_url: "https://example.com/second.jpg" },
+        { public_id: "first", secure_url: "https://example.com/first.jpg" },
+        { public_id: "second", secure_url: "https://example.com/second.jpg" },
       ],
     }));
 

@@ -47,6 +47,32 @@ function queryResult(data: unknown, error: unknown = null) {
   return query;
 }
 
+function deferredQuery() {
+  let resolveQuery: ((value: { data: null; error: null }) => void) | undefined;
+  const query = {
+    delete: vi.fn(),
+    eq: vi.fn(),
+  };
+
+  query.delete.mockReturnValue(query);
+  query.eq.mockReturnValue(query);
+
+  Object.assign(query, {
+    then: <T>(
+      onfulfilled?: ((value: { data: null; error: null }) => T | PromiseLike<T>) | null,
+      onrejected?: ((reason: unknown) => T | PromiseLike<T>) | null
+    ) =>
+      new Promise<{ data: null; error: null }>((resolve) => {
+        resolveQuery = resolve;
+      }).then(onfulfilled, onrejected),
+  });
+
+  return {
+    query,
+    resolve: () => resolveQuery?.({ data: null, error: null }),
+  };
+}
+
 describe("products service", () => {
   beforeEach(() => vi.clearAllMocks());
 
@@ -195,6 +221,45 @@ describe("products service", () => {
       ],
       { onConflict: "id" }
     );
+  });
+
+  it("starts every removed option deletion before waiting for a response", async () => {
+    const productQuery = queryResult({ id: "product-id", slug: "vela-aurora" });
+    const existingOptionsQuery = queryResult([
+      { id: "removed-option-one" },
+      { id: "removed-option-two" },
+    ]);
+    const firstDelete = deferredQuery();
+    const secondDelete = deferredQuery();
+    const upsertQuery = queryResult(null);
+    let productOptionsCalls = 0;
+    const from = vi.fn((table: string) => {
+      if (table === "products") return productQuery;
+      productOptionsCalls += 1;
+      if (productOptionsCalls === 1) return existingOptionsQuery;
+      if (productOptionsCalls === 2) return firstDelete.query;
+      if (productOptionsCalls === 3) return secondDelete.query;
+      return upsertQuery;
+    });
+    mocks.createClient.mockResolvedValue({ from });
+
+    const result = updateProductWithOptions(
+      "product-id",
+      { nombre: "Vela Aurora" },
+      [{ id: "kept-option", nombre: "Unidad", cantidad: 1, precio: 12.5, activo: true }]
+    );
+
+    try {
+      await vi.waitFor(() => {
+        expect(firstDelete.query.delete).toHaveBeenCalledOnce();
+      });
+      expect(secondDelete.query.delete).toHaveBeenCalledOnce();
+    } finally {
+      firstDelete.resolve();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      secondDelete.resolve();
+      await result;
+    }
   });
 
   it("rejects duplicate option IDs before invoking the update RPC", async () => {

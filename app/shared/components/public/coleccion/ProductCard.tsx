@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 interface ProductCardProps {
   slug: string;
@@ -23,7 +24,7 @@ export default function ProductCard({
 
   return (
     <Link
-      href={`/coleccion/producto/${slug}`}
+      href={ROUTES.PRODUCT(slug)}
       className="group flex min-w-0 flex-col gap-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-hard-brown"
     >
       <div className="relative aspect-square w-full overflow-hidden bg-neutral-100">

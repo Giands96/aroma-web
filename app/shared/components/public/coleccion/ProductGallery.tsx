@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 
 interface ProductImage {
+  public_id: string;
   secure_url: string;
 }
 
@@ -65,7 +66,7 @@ export default function ProductGallery({
 
               return (
                 <button
-                  key={`${image.secure_url}-${index}`}
+                  key={image.public_id}
                   type="button"
                   onClick={() => setSelectedIndex(index)}
                   aria-label={`Ver imagen ${index + 1} de ${productName}`}

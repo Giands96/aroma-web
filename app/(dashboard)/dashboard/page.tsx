@@ -2,6 +2,7 @@ import { getAllProducts } from "@/app/shared/services/products.service";
 import { getCurrentUser } from "@/app/shared/services/auth.service";
 import Link from "next/link";
 import { Package, Settings, Plus } from "lucide-react";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 export default async function DashboardHomePage() {
   const [user, products] = await Promise.all([
@@ -23,7 +24,7 @@ export default async function DashboardHomePage() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
-          href="/dashboard/productos"
+          href={ROUTES.DASHBOARD.PRODUCTS}
           className="block rounded-lg border border-zinc-200 bg-white p-5 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50"
         >
           <div className="flex items-center gap-3">
@@ -42,7 +43,7 @@ export default async function DashboardHomePage() {
         </Link>
 
         <Link
-          href="/dashboard/configuracion"
+          href={ROUTES.DASHBOARD.CONFIGURATION}
           className="block rounded-lg border border-zinc-200 bg-white p-5 shadow-sm transition-colors hover:border-zinc-300 hover:bg-zinc-50"
         >
           <div className="flex items-center gap-3">
@@ -72,7 +73,7 @@ export default async function DashboardHomePage() {
             </p>
           </div>
           <Link
-            href="/dashboard/productos/nuevo"
+            href={ROUTES.DASHBOARD.NEW_PRODUCT}
             className="flex min-h-11 items-center gap-2 rounded-md bg-zinc-950 px-4 py-2 font-dm-sans text-sm font-medium text-white transition-colors hover:bg-zinc-800"
           >
             <Plus aria-hidden="true" className="size-4" />

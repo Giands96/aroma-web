@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 function redirectWithCookies(response: NextResponse, destination: URL) {
   const redirectResponse = NextResponse.redirect(destination);
@@ -66,15 +67,16 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
   } = await supabase.auth.getUser();
   const pathname = request.nextUrl.pathname;
   const isDashboardRoute =
-    pathname === "/dashboard" || pathname.startsWith("/dashboard/");
+    pathname === ROUTES.DASHBOARD.HOME ||
+    pathname.startsWith(`${ROUTES.DASHBOARD.HOME}/`);
 
   if (isDashboardRoute && !user) {
-    return redirectWithCookies(response, new URL("/login", request.url));
+    return redirectWithCookies(response, new URL(ROUTES.LOGIN, request.url));
   }
 
   const isAuthorizationError = request.nextUrl.searchParams.has("error");
-  if (pathname === "/login" && user && !isAuthorizationError) {
-    return redirectWithCookies(response, new URL("/dashboard", request.url));
+  if (pathname === ROUTES.LOGIN && user && !isAuthorizationError) {
+    return redirectWithCookies(response, new URL(ROUTES.DASHBOARD.HOME, request.url));
   }
 
   return response;

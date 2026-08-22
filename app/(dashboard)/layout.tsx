@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/app/shared/actions/require-admin";
 import DashboardShell from "./dashboard/_components/DashboardShell";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 export default async function DashboardLayout({
   children,
@@ -10,7 +11,7 @@ export default async function DashboardLayout({
   try {
     await requireAdmin();
   } catch {
-    redirect("/login?error=admin");
+    redirect(ROUTES.LOGIN_ERROR("admin"));
   }
 
   return <DashboardShell>{children}</DashboardShell>;

@@ -1,16 +1,16 @@
 "use client";
 
-import { useEffect, useId, useState, useRef } from "react";
+import { useEffect, useId, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 const navigationItems = [
-  { label: "Inicio", href: "/home" },
-  { label: "Colección", href: "/coleccion" },
-  { label: "Personalización", href: "/personalizacion" },
-  { label: "Contacto", href: "/contacto" },
+  { label: "Inicio", href: ROUTES.HOME },
+  { label: "Colección", href: ROUTES.COLECCION },
+  { label: "Personalización", href: ROUTES.PERSONALIZACION },
 ] as const;
 
 export default function Navbar() {
@@ -27,7 +27,7 @@ function NavbarContent({ pathname }: NavbarContentProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const mobileMenuId = useId();
 
-  const isLightPage = pathname.startsWith("/personalizacion");
+  const isLightPage = pathname.startsWith(ROUTES.PERSONALIZACION);
 
   const handleToggleMenu = () => {
     setIsMenuOpen((currentState) => !currentState);
@@ -85,7 +85,7 @@ function NavbarContent({ pathname }: NavbarContentProps) {
         "
       >
         <Link
-          href="/home"
+          href={ROUTES.HOME}
           aria-label="Ir al inicio"
           className="
             rounded-sm
@@ -143,7 +143,7 @@ function NavbarContent({ pathname }: NavbarContentProps) {
 
         <div className="hidden md:flex">
           <Link
-            href="/carrito"
+            href={ROUTES.CART}
             aria-label="Abrir carrito"
             className={`
               rounded-full p-2
@@ -318,7 +318,7 @@ function MobileNavbar({
           }}
         >
           <Link
-            href="/carrito"
+            href={ROUTES.CART}
             onClick={onClose}
             tabIndex={isOpen ? 0 : -1}
             className="

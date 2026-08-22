@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { MoveUpRight } from "lucide-react";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 const navigationItems = [
-  { label: "Inicio", href: "/home" },
-  { label: "Colección", href: "/coleccion" },
-  { label: "Personalización", href: "/personalizacion" },
-  { label: "Contacto", href: "/contacto" },
+  { label: "Inicio", href: ROUTES.HOME },
+  { label: "Colección", href: ROUTES.COLECCION },
+  { label: "Personalización", href: ROUTES.PERSONALIZACION },
+  { label: "Contacto", href: ROUTES.CONTACTO },
 ] as const;
 
 const socialItems = [

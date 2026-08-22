@@ -12,6 +12,11 @@ import {
   type OptionDraft,
 } from "./ProductFormFields";
 import { ProductImagesSection, type ImageDraft } from "./ProductImagesSection";
+import {
+  createInitialOptionDrafts,
+  createNewOptionDraft,
+} from "./product-option-drafts";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 interface ProductFormProps {
   product?: Product;
@@ -27,16 +32,8 @@ export default function ProductForm({ product }: ProductFormProps) {
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [descripcion, setDescripcion] = useState(product?.descripcion ?? "");
   const [activo, setActivo] = useState(product?.activo ?? true);
-  const [options, setOptions] = useState<OptionDraft[]>(
-    product?.product_options?.length
-      ? product.product_options.map((option) => ({
-          id: option.id,
-          nombre: option.nombre,
-          cantidad: String(option.cantidad),
-          precio: String(option.precio),
-          activo: option.activo,
-        }))
-      : [{ nombre: "", cantidad: "1", precio: "", activo: true }]
+  const [options, setOptions] = useState<OptionDraft[]>(() =>
+    createInitialOptionDrafts(product?.product_options)
   );
   const [images, setImages] = useState<ImageDraft[]>(() =>
     getProductImages(product ?? {}).map((image) => ({
@@ -50,7 +47,7 @@ export default function ProductForm({ product }: ProductFormProps) {
 
   const updateOption = (
     index: number,
-    field: keyof Omit<OptionDraft, "id">,
+    field: keyof Omit<OptionDraft, "id" | "uiKey">,
     value: string | boolean
   ) => {
     setOptions((previousOptions) =>
@@ -63,7 +60,7 @@ export default function ProductForm({ product }: ProductFormProps) {
   const addOption = () => {
     setOptions((previousOptions) => [
       ...previousOptions,
-      { nombre: "", cantidad: "1", precio: "", activo: true },
+      createNewOptionDraft(),
     ]);
   };
 
@@ -138,12 +135,12 @@ export default function ProductForm({ product }: ProductFormProps) {
       slug,
       descripcion,
       activo,
-      options: options.map((option) => ({
-        ...(option.id ? { id: option.id } : {}),
-        nombre: option.nombre,
-        cantidad: Number(option.cantidad),
-        precio: Number(option.precio),
-        activo: option.activo,
+      options: options.map(({ id, nombre, cantidad, precio, activo }) => ({
+        ...(id ? { id } : {}),
+        nombre,
+        cantidad: Number(cantidad),
+        precio: Number(precio),
+        activo,
       })),
       image_entries: images.map((image) =>
         image.type === "existing"
@@ -161,7 +158,7 @@ export default function ProductForm({ product }: ProductFormProps) {
         setServerError(result.serverError);
         return;
       }
-      router.push("/dashboard/productos");
+      router.push(ROUTES.DASHBOARD.PRODUCTS);
     });
   };
 

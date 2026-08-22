@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   getProductById: vi.fn(),
   requireAdmin: vi.fn(),
   revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
   setProductImages: vi.fn(),
   uploadImageToCloudinary: vi.fn(),
   validateImageFile: vi.fn(),
@@ -17,6 +18,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/app/shared/actions/require-admin", () => ({ requireAdmin: mocks.requireAdmin }));
 vi.mock("@/app/shared/services/products.service", () => ({
+  PUBLIC_PRODUCTS_CACHE_TAG: "public-products",
   createProductWithOptions: mocks.createProductWithOptions,
   deleteProduct: mocks.deleteProduct,
   getProductById: mocks.getProductById,
@@ -34,9 +36,16 @@ vi.mock("@/app/shared/services/cloudinary.service", () => ({
 vi.mock("@/app/shared/lib/validations/image.schema", () => ({
   validateImageFile: mocks.validateImageFile,
 }));
-vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
+vi.mock("next/cache", () => ({
+  revalidatePath: mocks.revalidatePath,
+  revalidateTag: mocks.revalidateTag,
+}));
 
-import { createProductAction, updateProductAction } from "./products.actions";
+import {
+  createProductAction,
+  deleteProductAction,
+  updateProductAction,
+} from "./products.actions";
 
 const productId = "11111111-1111-4111-8111-111111111111";
 const optionId = "22222222-2222-4222-8222-222222222222";
@@ -60,6 +69,46 @@ describe("product actions", () => {
 
     expect(result.data).toEqual(product);
     expect(mocks.createProductWithOptions).toHaveBeenCalledOnce();
+  });
+
+  it("revalidates the public catalog after creating a product", async () => {
+    mocks.createProductWithOptions.mockResolvedValue({ id: productId, slug: "vela-aurora" });
+
+    await createProductAction({
+      nombre: "Vela Aurora",
+      slug: "vela-aurora",
+      descripcion: "Una vela artesanal para espacios cálidos y tranquilos.",
+      options: [{ nombre: "Unidad", cantidad: 1, precio: 12.5 }],
+    });
+
+    expect(mocks.revalidateTag).toHaveBeenCalledWith("public-products", "max");
+  });
+
+  it("revalidates the public catalog after updating a product", async () => {
+    mocks.getProductById.mockResolvedValue({
+      id: productId,
+      slug: "vela-aurora",
+      activo: true,
+      imagenes: [],
+    });
+    mocks.updateProduct.mockResolvedValue({ id: productId, slug: "vela-aurora" });
+
+    await updateProductAction({ id: productId, nombre: "Vela Aurora renovada" });
+
+    expect(mocks.revalidateTag).toHaveBeenCalledWith("public-products", "max");
+  });
+
+  it("revalidates the public catalog after deleting a product", async () => {
+    mocks.getProductById.mockResolvedValue({
+      id: productId,
+      slug: "vela-aurora",
+      imagenes: [],
+    });
+    mocks.deleteProduct.mockResolvedValue(undefined);
+
+    await deleteProductAction({ id: productId });
+
+    expect(mocks.revalidateTag).toHaveBeenCalledWith("public-products", "max");
   });
 
   it("uploads local image files before saving the product gallery", async () => {
@@ -104,6 +153,55 @@ describe("product actions", () => {
       }),
       expect.any(Array)
     );
+  });
+
+  it("starts all gallery file validations before any one completes", async () => {
+    const firstFile = new File(["first"], "first.png", { type: "image/png" });
+    const secondFile = new File(["second"], "second.png", { type: "image/png" });
+    const resolvers: Array<() => void> = [];
+    mocks.validateImageFile.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolvers.push(() =>
+            resolve({
+              buffer: Buffer.from("image"),
+              mime: "image/png",
+              extension: "png",
+              width: 1200,
+              height: 1200,
+            })
+          );
+        })
+    );
+    mocks.uploadImageToCloudinary.mockResolvedValue({
+      publicId: "aroma/products/vela-aurora",
+      secureUrl: "https://res.cloudinary.com/example/vela-aurora.jpg",
+    });
+    mocks.createProductWithOptions.mockResolvedValue({ id: productId, slug: "vela-aurora" });
+
+    const result = createProductAction({
+      nombre: "Vela Aurora",
+      slug: "vela-aurora",
+      descripcion: "Una vela artesanal para espacios cálidos y tranquilos.",
+      options: [{ nombre: "Unidad", cantidad: 1, precio: 12.5 }],
+      image_entries: [
+        { type: "file", file: firstFile },
+        { type: "file", file: secondFile },
+      ],
+    });
+
+    try {
+      await vi.waitFor(() => {
+        expect(mocks.validateImageFile).toHaveBeenCalled();
+      });
+      expect(mocks.validateImageFile).toHaveBeenCalledTimes(2);
+    } finally {
+      while (resolvers.length > 0) {
+        resolvers.splice(0).forEach((resolve) => resolve());
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+      await result;
+    }
   });
 
   it("rejects an active product update without active options", async () => {
@@ -172,6 +270,49 @@ describe("product actions", () => {
       })
     );
     expect(mocks.deleteImageFromCloudinary).toHaveBeenCalledWith(oldImage.public_id);
+  });
+
+  it("starts independent removed-image deletions together", async () => {
+    const oldImages = [
+      {
+        public_id: "aroma/products/old-front",
+        secure_url: "https://res.cloudinary.com/example/old-front.jpg",
+      },
+      {
+        public_id: "aroma/products/old-back",
+        secure_url: "https://res.cloudinary.com/example/old-back.jpg",
+      },
+    ];
+    const resolvers: Array<() => void> = [];
+    mocks.getProductById.mockResolvedValue({
+      id: productId,
+      slug: "vela-aurora",
+      activo: true,
+      imagenes: oldImages,
+    });
+    mocks.updateProduct.mockResolvedValue({
+      id: productId,
+      slug: "vela-aurora",
+      imagenes: [],
+    });
+    mocks.deleteImageFromCloudinary.mockImplementation(
+      () => new Promise<void>((resolve) => resolvers.push(resolve))
+    );
+
+    const result = updateProductAction({ id: productId, image_entries: [] });
+
+    try {
+      await vi.waitFor(() => {
+        expect(mocks.deleteImageFromCloudinary).toHaveBeenCalled();
+      });
+      expect(mocks.deleteImageFromCloudinary).toHaveBeenCalledTimes(2);
+    } finally {
+      while (resolvers.length > 0) {
+        resolvers.splice(0).forEach((resolve) => resolve());
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+      await result;
+    }
   });
 
   it("cleans uploaded Cloudinary images when product creation fails", async () => {

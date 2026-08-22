@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { getAllProducts } from "@/app/shared/services/products.service";
 import ProductList from "../_components/ProductList";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 export default async function DashboardProductosPage() {
   const products = await getAllProducts();
@@ -14,7 +15,7 @@ export default async function DashboardProductosPage() {
           <h1 className="mt-1 font-dm-sans text-2xl font-semibold tracking-tight text-zinc-950">Productos</h1>
         </div>
         <Link
-          href="/dashboard/productos/nuevo"
+          href={ROUTES.DASHBOARD.NEW_PRODUCT}
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-zinc-950 px-4 py-2 font-dm-sans text-sm font-medium text-white transition-colors hover:bg-zinc-800"
         >
           <Plus aria-hidden="true" className="size-4" />
@@ -28,7 +29,7 @@ export default async function DashboardProductosPage() {
             No hay productos todavía.
           </p>
           <Link
-            href="/dashboard/productos/nuevo"
+            href={ROUTES.DASHBOARD.NEW_PRODUCT}
             className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-md border border-zinc-200 px-4 font-dm-sans text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100"
           >
             <Plus aria-hidden="true" className="size-4" />

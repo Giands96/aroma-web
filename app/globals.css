@@ -24,6 +24,12 @@
 
 html,body {
   overflow-x: hidden;
+  scrollbar-width: none;
+
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge, Opera */
 }
 
 body {

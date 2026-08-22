@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { z } from "zod";
 import {
   assertActiveProductHasOption,
@@ -26,6 +26,7 @@ import {
   uploadImageToCloudinary,
 } from "@/app/shared/services/cloudinary.service";
 import {
+  PUBLIC_PRODUCTS_CACHE_TAG,
   createProductWithOptions,
   deleteProduct,
   getProductById,
@@ -33,6 +34,7 @@ import {
   updateProductWithOptions,
 } from "@/app/shared/services/products.service";
 import { getAllProductOptionsByProductId } from "@/app/shared/services/product-options.service";
+import { ROUTES } from "@/app/shared/routes/routes";
 
 const productOptionInputSchema = productOptionSchema.extend({ id: z.uuid().optional() });
 
@@ -53,9 +55,9 @@ const updateProductInputSchema = productUpdateSchema.extend({
 const deleteProductInputSchema = z.object({ id: z.uuid() });
 
 function revalidateProductPaths(slug: string) {
-  revalidatePath("/coleccion");
-  revalidatePath(`/coleccion/producto/${slug}`);
-  revalidatePath("/dashboard/productos");
+  revalidatePath(ROUTES.COLECCION);
+  revalidatePath(ROUTES.PRODUCT(slug));
+  revalidatePath(ROUTES.DASHBOARD.PRODUCTS);
 }
 
 async function resolveImageEntries(
@@ -72,42 +74,56 @@ async function resolveImageEntries(
   const existingByPublicId = new Map(
     currentImages.map((image) => [image.public_id, image])
   );
-  const uploadedImages: ProductImage[] = [];
-  try {
-    const images = [] as ProductImage[];
-    for (const entry of entries) {
+  const resolvedEntries = await Promise.allSettled(
+    entries.map(async (entry) => {
       if (entry.type === "existing") {
         const image = existingByPublicId.get(entry.public_id);
         if (!image) throw new Error("La imagen existente no pertenece al producto.");
-        images.push(image);
-        continue;
+        return { image, uploaded: false };
       }
 
       const validatedImage = await validateImageFile(entry.file);
       const uploadedImage = await uploadImageToCloudinary(validatedImage);
-      const image = {
-        public_id: uploadedImage.publicId,
-        secure_url: uploadedImage.secureUrl,
+      return {
+        image: {
+          public_id: uploadedImage.publicId,
+          secure_url: uploadedImage.secureUrl,
+        },
+        uploaded: true,
       };
-      uploadedImages.push(image);
-      images.push(image);
-    }
+    })
+  );
+  const images: ProductImage[] = [];
+  const uploadedImages: ProductImage[] = [];
+  const failedEntry = resolvedEntries.find((entry) => entry.status === "rejected");
 
-    return { images, uploadedImages };
-  } catch (error) {
-    await deleteImages(uploadedImages);
-    throw error;
+  for (const entry of resolvedEntries) {
+    if (entry.status === "fulfilled") {
+      images.push(entry.value.image);
+      if (entry.value.uploaded) {
+        uploadedImages.push(entry.value.image);
+      }
+    }
   }
+
+  if (failedEntry?.status === "rejected") {
+    await deleteImages(uploadedImages);
+    throw failedEntry.reason;
+  }
+
+  return { images, uploadedImages };
 }
 
 async function deleteImages(images: ProductImage[]) {
-  for (const image of images) {
-    try {
-      await deleteImageFromCloudinary(image.public_id);
-    } catch (error) {
-      console.error("Failed to delete product image from Cloudinary", error);
-    }
-  }
+  await Promise.all(
+    images.map(async (image) => {
+      try {
+        await deleteImageFromCloudinary(image.public_id);
+      } catch (error) {
+        console.error("Failed to delete product image from Cloudinary", error);
+      }
+    })
+  );
 }
 
 function getRemovedImages(currentImages: ProductImage[], nextImages: ProductImage[]) {
@@ -141,6 +157,7 @@ export const createProductAction = actionClient.inputSchema(createProductInputSc
     }
 
     revalidateProductPaths(savedProduct.slug);
+    revalidateTag(PUBLIC_PRODUCTS_CACHE_TAG, "max");
     return savedProduct;
   });
 
@@ -188,6 +205,7 @@ export const updateProductAction = actionClient
 
     revalidateProductPaths(currentProduct.slug);
     revalidateProductPaths(savedProduct.slug);
+    revalidateTag(PUBLIC_PRODUCTS_CACHE_TAG, "max");
     return savedProduct;
   });
 
@@ -204,4 +222,5 @@ export const deleteProductAction = actionClient
     await deleteImages(getProductImages(product));
 
     revalidateProductPaths(product.slug);
+    revalidateTag(PUBLIC_PRODUCTS_CACHE_TAG, "max");
   });

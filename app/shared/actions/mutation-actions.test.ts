@@ -5,16 +5,21 @@ const mocks = vi.hoisted(() => ({
   updateCartLimits: vi.fn(),
   updateWhatsAppConfig: vi.fn(),
   revalidatePath: vi.fn(),
+  revalidateTag: vi.fn(),
 }));
 
 vi.mock("@/app/shared/actions/require-admin", () => ({
   requireAdmin: mocks.requireAdmin,
 }));
 vi.mock("@/app/shared/services/config.service", () => ({
+  PUBLIC_WHATSAPP_CONFIG_CACHE_TAG: "public-whatsapp-config",
   updateCartLimits: mocks.updateCartLimits,
   updateWhatsAppConfig: mocks.updateWhatsAppConfig,
 }));
-vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
+vi.mock("next/cache", () => ({
+  revalidatePath: mocks.revalidatePath,
+  revalidateTag: mocks.revalidateTag,
+}));
 
 import { updateCartLimitsAction, updateWhatsAppConfigAction } from "./config.actions";
 describe("configuration actions", () => {

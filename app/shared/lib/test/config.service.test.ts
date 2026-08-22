@@ -3,15 +3,22 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   createAdminClient: vi.fn(),
   createClient: vi.fn(),
+  createPublicClient: vi.fn(),
+  unstableCache: vi.fn((callback) => callback),
 }));
 
 vi.mock("@/app/shared/lib/supabase/server", () => ({
   createAdminClient: mocks.createAdminClient,
   createClient: mocks.createClient,
+  createPublicClient: mocks.createPublicClient,
+}));
+vi.mock("next/cache", () => ({
+  unstable_cache: mocks.unstableCache,
 }));
 
 import {
   getCartLimits,
+  getPublicWhatsAppConfig,
   getWhatsAppConfig,
   updateWhatsAppConfig,
 } from "../../services/config.service";
@@ -101,6 +108,37 @@ describe("config service", () => {
       mensaje_carrito: "Hola, quiero información sobre mi carrito.",
       mensaje_producto: "Hola, quiero información sobre {producto_name}.",
     });
+  });
+
+  it("reads WhatsApp configuration through the cookie-free client", async () => {
+    const config = {
+      clave: "principal",
+      telefono: "51945513054",
+      mensaje_carrito: "Hola",
+      mensaje_producto: "Hola por {producto_name}",
+    };
+    const query = queryResult(config);
+    mocks.createPublicClient.mockReturnValue({ from: vi.fn(() => query) });
+
+    await expect(getPublicWhatsAppConfig()).resolves.toEqual(config);
+
+    expect(mocks.createPublicClient).toHaveBeenCalledOnce();
+    expect(mocks.createClient).not.toHaveBeenCalled();
+  });
+
+  it("caches public WhatsApp configuration for five minutes", async () => {
+    vi.resetModules();
+
+    await import("../../services/config.service");
+
+    expect(mocks.unstableCache).toHaveBeenCalledWith(
+      expect.any(Function),
+      ["public-whatsapp-config"],
+      {
+        revalidate: 300,
+        tags: ["public-whatsapp-config"],
+      },
+    );
   });
 
 });
