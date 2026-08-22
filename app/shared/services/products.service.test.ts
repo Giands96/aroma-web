@@ -2,11 +2,17 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   createClient: vi.fn(),
+  createPublicClient: vi.fn(),
+  unstableCache: vi.fn((callback) => callback),
 }));
 
 vi.mock("server-only", () => ({}));
 vi.mock("@/app/shared/lib/supabase/server", () => ({
   createClient: mocks.createClient,
+  createPublicClient: mocks.createPublicClient,
+}));
+vi.mock("next/cache", () => ({
+  unstable_cache: mocks.unstableCache,
 }));
 
 import {
@@ -14,6 +20,8 @@ import {
   deleteFeaturedProduct,
   getConfiguredFeaturedProducts,
   getFeaturedProducts,
+  getPublicProductBySlug,
+  getPublicProductsPage,
   getThreeLastProducts,
 } from "./products.service";
 
@@ -30,6 +38,7 @@ function queryResult({ count, data = null, error = null }: QueryResponse) {
     gt: vi.fn(),
     lt: vi.fn(),
     order: vi.fn(),
+    range: vi.fn(),
     limit: vi.fn(),
     insert: vi.fn(),
     update: vi.fn(),
@@ -43,6 +52,7 @@ function queryResult({ count, data = null, error = null }: QueryResponse) {
   query.gt.mockReturnValue(query);
   query.lt.mockReturnValue(query);
   query.order.mockReturnValue(query);
+  query.range.mockReturnValue(query);
   query.limit.mockReturnValue(query);
   query.insert.mockResolvedValue({ error: null });
   query.update.mockReturnValue(query);
@@ -89,6 +99,12 @@ function deferredUpdateQuery() {
 function mockClient(...queries: unknown[]) {
   const from = vi.fn(() => queries.shift());
   mocks.createClient.mockResolvedValue({ from });
+  return from;
+}
+
+function mockPublicClient(...queries: unknown[]) {
+  const from = vi.fn(() => queries.shift());
+  mocks.createPublicClient.mockReturnValue({ from });
   return from;
 }
 
@@ -303,5 +319,67 @@ describe("latest eligible products service", () => {
       referencedTable: "product_options",
     });
     expect(query.limit).toHaveBeenCalledWith(3);
+  });
+});
+
+describe("public catalog service", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("reads the catalog through the cookie-free client", async () => {
+    const query = queryResult({ count: 0, data: [] });
+    const from = mockPublicClient(query);
+
+    await expect(getPublicProductsPage(1, 8)).resolves.toEqual({
+      products: [],
+      total: 0,
+    });
+
+    expect(mocks.createPublicClient).toHaveBeenCalledOnce();
+    expect(mocks.createClient).not.toHaveBeenCalled();
+    expect(from).toHaveBeenCalledWith("products");
+    expect(query.range).toHaveBeenCalledWith(0, 7);
+  });
+
+  it("caches public catalog reads for five minutes with the products tag", async () => {
+    vi.resetModules();
+
+    await import("./products.service");
+
+    expect(mocks.unstableCache).toHaveBeenCalledWith(
+      expect.any(Function),
+      ["public-products-page"],
+      {
+        revalidate: 300,
+        tags: ["public-products"],
+      },
+    );
+  });
+
+  it("reads a public product detail through the cookie-free client", async () => {
+    const product = { id: "product-id", slug: "vela-aurora" };
+    const query = queryResult({ data: product });
+    const from = mockPublicClient(query);
+
+    await expect(getPublicProductBySlug("vela-aurora")).resolves.toEqual(product);
+
+    expect(mocks.createPublicClient).toHaveBeenCalledOnce();
+    expect(mocks.createClient).not.toHaveBeenCalled();
+    expect(from).toHaveBeenCalledWith("products");
+    expect(query.eq).toHaveBeenCalledWith("slug", "vela-aurora");
+  });
+
+  it("caches public product detail reads with the products tag", async () => {
+    vi.resetModules();
+
+    await import("./products.service");
+
+    expect(mocks.unstableCache).toHaveBeenCalledWith(
+      expect.any(Function),
+      ["public-product-detail"],
+      {
+        revalidate: 300,
+        tags: ["public-products"],
+      },
+    );
   });
 });

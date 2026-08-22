@@ -41,3 +41,14 @@ export function createAdminClient() {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 }
+
+export function createPublicClient() {
+
+  return createSupabaseClient(supabaseUrl!, supabaseKey!, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+    },
+  });
+}

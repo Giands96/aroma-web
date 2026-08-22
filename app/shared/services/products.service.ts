@@ -1,5 +1,5 @@
 import "server-only";
-import { createClient } from "@/app/shared/lib/supabase/server";
+import { createClient, createPublicClient } from "@/app/shared/lib/supabase/server";
 import {
   MAX_FEATURED_PRODUCTS,
   MIN_FEATURED_PRODUCTS,
@@ -8,6 +8,9 @@ import type { ProductOptionInput } from "@/app/shared/lib/validations/product-op
 import type { ProductImage } from "@/app/shared/lib/validations/product-image.schema";
 import type { Product } from "@/app/shared/types/product.types";
 import type { FeaturedProduct } from "@/app/shared/types";
+import { unstable_cache } from "next/cache";
+
+export const PUBLIC_PRODUCTS_CACHE_TAG = "public-products";
 
 export interface ProductWriteInput {
   nombre: string;
@@ -45,6 +48,41 @@ export async function getProductsPage(
 
   if (error) throw error;
   return { products: (data ?? []) as Product[], total: count ?? 0 };
+}
+
+const getCachedPublicProductsPage = unstable_cache(
+  async (
+    page: number,
+    pageSize: number,
+  ): Promise<PaginatedProducts> => {
+    const supabase = createPublicClient();
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize - 1;
+    const { data, error, count } = await supabase
+      .from("products")
+      .select("*, product_options!inner(*)", { count: "exact" })
+      .eq("activo", true)
+      .eq("product_options.activo", true)
+      .order("cantidad", { ascending: true, referencedTable: "product_options" })
+      .order("created_at", { ascending: false })
+      .range(start, end);
+
+    if (error) throw error;
+
+    return { products: (data ?? []) as Product[], total: count ?? 0 };
+  },
+  ["public-products-page"],
+  {
+    revalidate: 300,
+    tags: [PUBLIC_PRODUCTS_CACHE_TAG],
+  },
+);
+
+export function getPublicProductsPage(
+  page: number,
+  pageSize: number,
+): Promise<PaginatedProducts> {
+  return getCachedPublicProductsPage(page, pageSize);
 }
 
 export async function getProducts(): Promise<Product[]> {
@@ -91,6 +129,35 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
   if (error) throw error;
   return data as Product;
 }
+
+const getCachedPublicProductBySlug = unstable_cache(
+  async (slug: string): Promise<Product | null> => {
+    const supabase = createPublicClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("*, product_options!inner(*)")
+      .eq("slug", slug)
+      .eq("activo", true)
+      .eq("product_options.activo", true)
+      .order("cantidad", { ascending: true, referencedTable: "product_options" })
+      .single();
+
+    if (error?.code === "PGRST116") return null;
+    if (error) throw error;
+
+    return data as Product;
+  },
+  ["public-product-detail"],
+  {
+    revalidate: 300,
+    tags: [PUBLIC_PRODUCTS_CACHE_TAG],
+  },
+);
+
+export function getPublicProductBySlug(slug: string): Promise<Product | null> {
+  return getCachedPublicProductBySlug(slug);
+}
+
 
 export async function getProductById(id: string): Promise<Product | null> {
   const supabase = await createClient();
