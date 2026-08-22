@@ -1,7 +1,6 @@
 import ColeccionSection from "@/app/shared/components/public/home/Coleccion";
 import Hero from "@/app/shared/components/public/home/Hero";
 import Personalizacion from "@/app/shared/components/public/home/Personalizacion";
-import Link from "next/link";
 import React from "react";
 import AtmosphereSection from './../../shared/components/public/home/CtaSection';
 

@@ -6,14 +6,6 @@ import { MoveRight } from "lucide-react";
 import FoldText from '@/app/shared/components/ui/FoldText';
 import { ROUTES } from "@/app/shared/routes/routes";
 
-function windowWidth(): number {
-  if (typeof window !== 'undefined') {
-    console.log('window.innerWidth:', window.innerWidth);
-    return window.innerWidth;
-  }
-  return 0;
-}
-
 export default function Hero() {
   return (
     <section

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState, useRef } from "react";
+import { useEffect, useId, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, ShoppingBag, X } from "lucide-react";
