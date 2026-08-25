@@ -2,12 +2,10 @@ import Image from "next/image";
 import { MoveUpRight } from "lucide-react";
 
 interface AtmosphereSectionProps {
-  imageSrc?: string;
   whatsappHref: string;
 }
 
 export default function AtmosphereSection({
-  imageSrc = "/images/atmosfera-aroma.jpg",
   whatsappHref,
 }: AtmosphereSectionProps) {
   return (
@@ -21,7 +19,7 @@ export default function AtmosphereSection({
     >
       {/* Imagen de fondo */}
       <Image
-        src={imageSrc}
+        src="/atmosfera-aroma.jpg"
         alt=""
         fill
         sizes="100vw"

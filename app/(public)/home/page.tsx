@@ -11,7 +11,6 @@ export default function HomePublic() {
         <ColeccionSection />
         <Personalizacion />
         <AtmosphereSection
-          imageSrc="/images/atmosfera-aroma.jpg"
           whatsappHref="https://wa.me/51944888171"
         />
       </main>
