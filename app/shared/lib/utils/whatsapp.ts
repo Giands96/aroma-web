@@ -26,7 +26,7 @@ export function buildWhatsAppUrl(
   const total = items.reduce((sum, item) => sum + getCartItemTotal(item), 0);
   const lines = items.map((item) =>
     renderWhatsAppTemplate(messageTemplate, {
-      producto_name: item.productName,
+      producto_name: `${item.productName} · ${item.optionName}`,
       producto_cantidad: String(item.quantity),
       producto_precio: String("S/"+item.optionPrice),
       producto_total: String("S/"+getCartItemTotal(item)),
