@@ -20,6 +20,25 @@ export default function DashboardHeader() {
 
   return (
     <>
+      {/* Mobile top bar — marca + salida (en móvil no hay sidebar) */}
+      <header className="sticky top-0 z-40 flex min-h-14 items-center justify-between border-b border-zinc-200 bg-white/95 px-4 backdrop-blur md:hidden">
+        <Link
+          href={ROUTES.DASHBOARD.HOME}
+          className="font-mileast text-lg text-zinc-950"
+        >
+          Aroma
+        </Link>
+        <button
+          type="button"
+          onClick={() => executeLogout()}
+          disabled={isExecuting}
+          aria-label="Cerrar sesión"
+          className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-950 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <LogOut aria-hidden="true" className="size-5" />
+        </button>
+      </header>
+
       {/* Desktop sidebar */}
       <aside className="fixed inset-y-0 hidden w-64 flex-col border-r border-zinc-200 bg-white md:flex">
         <div className="flex h-16 items-center border-b border-zinc-200 px-6">
@@ -50,15 +69,6 @@ export default function DashboardHeader() {
               </Link>
             );
           })}
-          <button
-            type="button"
-            onClick={() => executeLogout()}
-            disabled={isExecuting}
-            className="flex min-h-16 flex-1 cursor-pointer flex-col items-center justify-center gap-1 font-dm-sans text-xs text-zinc-500 transition-colors hover:text-zinc-950 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <LogOut aria-hidden="true" className="size-5" />
-            {isExecuting ? "Saliendo..." : "Salir"}
-          </button>
         </nav>
 
         <div className="border-t border-zinc-200 px-3 py-3">
@@ -75,7 +85,7 @@ export default function DashboardHeader() {
       </aside>
 
       {/* Mobile bottom tab bar */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-zinc-200 bg-white/95 backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 flex border-t border-zinc-200 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden">
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
@@ -83,10 +93,16 @@ export default function DashboardHeader() {
               key={item.href}
               href={item.href}
               aria-current={isActive ? "page" : undefined}
-              className={`flex min-h-16 flex-1 flex-col items-center justify-center gap-1 font-dm-sans text-xs transition-colors ${
+              className={`relative flex min-h-16 flex-1 flex-col items-center justify-center gap-1 font-dm-sans text-xs transition-colors ${
                 isActive ? "font-medium text-zinc-950" : "text-zinc-500"
               }`}
             >
+              {isActive && (
+                <span
+                  aria-hidden="true"
+                  className="absolute top-0 h-0.5 w-10 rounded-full bg-zinc-950"
+                />
+              )}
               <item.icon aria-hidden="true" className="size-5" />
               {item.label}
             </Link>

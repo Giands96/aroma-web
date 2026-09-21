@@ -3,7 +3,6 @@ export const ROUTES = {
   COLECCION: "/coleccion",
   COLECCION_PAGE: (page: number) => `/coleccion?page=${page}`,
   PRODUCT: (slug: string) => `/coleccion/producto/${encodeURIComponent(slug)}`,
-  LEGACY_PRODUCT: (id: string) => `/producto/${encodeURIComponent(id)}`,
   PERSONALIZACION: "/personalizacion",
   CONTACTO: "/contacto",
   LOGIN: "/login",

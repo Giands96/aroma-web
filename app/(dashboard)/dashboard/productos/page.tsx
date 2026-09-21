@@ -16,7 +16,7 @@ export default async function DashboardProductosPage() {
         </div>
         <Link
           href={ROUTES.DASHBOARD.NEW_PRODUCT}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-md bg-zinc-950 px-4 py-2 font-dm-sans text-sm font-medium text-white transition-colors hover:bg-zinc-800"
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-md bg-zinc-950 px-4 py-2 font-dm-sans text-sm font-medium text-white transition-colors hover:bg-zinc-800 sm:w-auto sm:min-h-12"
         >
           <Plus aria-hidden="true" className="size-4" />
           Nuevo

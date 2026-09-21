@@ -17,7 +17,7 @@ describe("buildWhatsAppUrl", () => {
       "Hola Aroma, quiero consultar por {producto_name}: {producto_cantidad} x {producto_precio}"
     );
 
-    expect(decodeURIComponent(url)).toContain("Hola Aroma, quiero consultar por Vela Aurora: 1 x S/");
+    expect(decodeURIComponent(url)).toContain("Hola Aroma, quiero consultar por Vela Aurora · Pack regalo: 1 x S/");
   });
 
   it("formats a selected product option with the configured product template", () => {

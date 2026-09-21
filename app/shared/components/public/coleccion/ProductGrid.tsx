@@ -16,11 +16,11 @@ export default function ProductGrid({
   totalPages,
 }: ProductGridProps) {
   return (
-    <div className=" w-full ">
+    <div className="w-full pt-10 lg:pt-12">
       <div className="flex flex-col gap-12">
         {products.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 2xl:grid-cols-4">
-            {products.map((product) => {
+          <ul className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10">
+            {products.map((product, i) => {
               const option = product.product_options?.[0];
 
               if (!option) {
@@ -34,12 +34,13 @@ export default function ProductGrid({
                   imageSrc={getProductImages(product)[0]?.secure_url ?? null}
                   nombre={product.nombre}
                   precio={option.precio}
+                  index={i}
                 />
               );
             })}
-          </div>
+          </ul>
         ) : (
-          <p className="font-dm-sans text-neutral-700">
+          <p className="font-dm-sans text-sm leading-6 text-[#433227]">
             No hay productos disponibles.
           </p>
         )}
@@ -52,34 +53,34 @@ export default function ProductGrid({
             {currentPage > 1 ? (
               <Link
                 href={ROUTES.COLECCION_PAGE(currentPage - 1)}
-                className="rounded-full border border-hard-brown px-5 py-2 font-dm-sans text-hard-brown transition-colors hover:bg-hard-brown hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hard-brown"
+                className="inline-flex min-h-11 items-center rounded-[2px] border border-hard-brown px-5 py-2 font-dm-sans text-xs uppercase tracking-[0.16em] text-hard-brown transition-colors duration-200 hover:bg-hard-brown hover:text-[#F4EDE9] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hard-brown"
               >
                 Anterior
               </Link>
             ) : (
               <span
                 aria-disabled="true"
-                className="cursor-not-allowed rounded-full border border-neutral-300 px-5 py-2 font-dm-sans text-neutral-400"
+                className="inline-flex min-h-11 cursor-not-allowed items-center rounded-[2px] border border-hard-brown/30 px-5 py-2 font-dm-sans text-xs uppercase tracking-[0.16em] text-hard-brown/40"
               >
                 Anterior
               </span>
             )}
 
-            <span className="font-dm-sans text-sm text-hard-brown sm:text-base">
+            <span className="font-dm-sans text-sm tabular-nums tracking-[0.08em] text-[#433227]">
               Página {currentPage} de {totalPages}
             </span>
 
             {currentPage < totalPages ? (
               <Link
                 href={ROUTES.COLECCION_PAGE(currentPage + 1)}
-                className="rounded-full bg-hard-brown px-5 py-2 font-dm-sans text-white transition-colors hover:bg-hard-brown/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hard-brown"
+                className="inline-flex min-h-11 items-center rounded-[2px] bg-hard-brown px-5 py-2 font-dm-sans text-xs uppercase tracking-[0.16em] text-[#F4EDE9] transition-colors duration-200 hover:bg-[#6d5540] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hard-brown"
               >
                 Siguiente
               </Link>
             ) : (
               <span
                 aria-disabled="true"
-                className="cursor-not-allowed rounded-full bg-neutral-300 px-5 py-2 font-dm-sans text-neutral-500"
+                className="inline-flex min-h-11 cursor-not-allowed items-center rounded-[2px] bg-hard-brown/20 px-5 py-2 font-dm-sans text-xs uppercase tracking-[0.16em] text-hard-brown/40"
               >
                 Siguiente
               </span>

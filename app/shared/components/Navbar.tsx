@@ -61,12 +61,12 @@ function NavbarContent({ pathname }: NavbarContentProps) {
   }, [isMenuOpen]);
 
   const navbarClasses = isLightPage
-    ? "border-hard-brown/20 bg-[#FCFAF7]/90 text-hard-brown"
-    : "border-white/15 bg-black/35 text-white";
+    ? "border-hard-brown/20 bg-black/50 text-white"
+    : "border-white/15 bg-black/50 text-white";
 
   const interactiveClasses = isLightPage
     ? "hover:bg-hard-brown/5 focus-visible:ring-hard-brown"
-    : "hover:bg-white/10 focus-visible:ring-white";
+    : "hover:bg-white/10 text-white focus-visible:ring-white";
 
   return (
     <nav

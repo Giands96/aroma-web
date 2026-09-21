@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { createCartItem } from "@/app/shared/lib/purchase-options";
 import { buildProductWhatsAppUrl } from "@/app/shared/lib/utils/whatsapp";
 import { useCartStore } from "@/app/shared/stores/cart.store";
+import { ROUTES } from "@/app/shared/routes/routes";
 import type { Product } from "@/app/shared/types/product.types";
 import type { ProductOption } from "@/app/shared/types/product-option.types";
 
@@ -19,6 +22,7 @@ export default function ProductPurchaseActions({
   messageTemplate,
 }: ProductPurchaseActionsProps) {
   const addItem = useCartStore((state) => state.addItem);
+  const router = useRouter();
   const [selectedOption, setSelectedOption] = useState<ProductOption | null>(null);
   const [cartError, setCartError] = useState<string | null>(null);
   const cartItem = selectedOption ? createCartItem(product, selectedOption) : null;
@@ -28,6 +32,16 @@ export default function ProductPurchaseActions({
 
     const result = addItem(cartItem);
     setCartError(result.success ? null : result.message);
+
+    if (result.success) {
+      toast.success("Añadido al carrito", {
+        description: `${product.nombre} · ${cartItem.optionName}`,
+        action: {
+          label: "Ver carrito",
+          onClick: () => router.push(ROUTES.CART),
+        },
+      });
+    }
   };
 
   const handleWhatsAppQuote = () => {
