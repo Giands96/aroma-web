@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from './app/shared/lib/supabase/proxy';
+import { RateLimitedError, checkLoginPageRateLimit } from './app/shared/lib/rate-limit';
 import { ROUTES } from './app/shared/routes/routes';
  
 function requiresSessionRefresh(pathname: string){
@@ -12,7 +13,20 @@ function requiresSessionRefresh(pathname: string){
 } 
 
 // This function can be marked `async` if using `await` inside
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
+  if (request.nextUrl.pathname === ROUTES.LOGIN) {
+    try {
+      await checkLoginPageRateLimit(request.headers);
+    } catch (error) {
+      if (error instanceof RateLimitedError) {
+        return new NextResponse("Demasiados intentos. Probá de nuevo más tarde.", {
+          status: 429,
+          headers: { "Retry-After": String(error.retryAfterSeconds) },
+        });
+      }
+      throw error;
+    }
+  }
   return requiresSessionRefresh(request.nextUrl.pathname) ? updateSession(request) : NextResponse.next();
 }
  

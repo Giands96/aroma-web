@@ -1,8 +1,10 @@
 "use server"
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { actionClient } from "../lib/safe-action";
+import { checkLoginRateLimit } from "../lib/rate-limit";
 import { signInWithEmail, signOut } from "../services/auth.service";
 import { ROUTES } from "@/app/shared/routes/routes";
 
@@ -14,6 +16,7 @@ const loginSchema = z.object({
 export const loginAction = actionClient
   .inputSchema(loginSchema)
   .action(async ({ parsedInput }) => {
+    await checkLoginRateLimit(await headers(), parsedInput.email);
     try {
       await signInWithEmail(
         parsedInput.email,
