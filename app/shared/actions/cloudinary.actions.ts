@@ -2,8 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/app/shared/actions/require-admin";
-import { actionClient } from "@/app/shared/lib/safe-action";
+import { adminActionClient } from "@/app/shared/lib/safe-action";
 import { validateImageFile } from "@/app/shared/lib/validations/image.schema";
 import { getProductImages } from "@/app/shared/lib/utils/product-images";
 import {
@@ -25,10 +24,9 @@ const deleteImageInputSchema = z.object({
   publicId: z.string().trim().min(1).optional(),
 });
 
-export const uploadProductImageAction = actionClient
+export const uploadProductImageAction = adminActionClient
   .inputSchema(uploadImageInputSchema)
   .action(async ({ parsedInput }) => {
-    await requireAdmin();
     const image = await validateImageFile(parsedInput.file);
     const uploadedImage = await uploadImageToCloudinary(image);
 
@@ -38,10 +36,9 @@ export const uploadProductImageAction = actionClient
     };
   });
 
-export const deleteProductImageAction = actionClient
+export const deleteProductImageAction = adminActionClient
   .inputSchema(deleteImageInputSchema)
   .action(async ({ parsedInput }) => {
-    await requireAdmin();
     const product = await getProductById(parsedInput.productId);
     if (!product) return;
 

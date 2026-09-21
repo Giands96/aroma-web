@@ -1,4 +1,10 @@
 import { createSafeActionClient } from "next-safe-action";
+import { headers } from "next/headers";
+import { requireAdmin } from "@/app/shared/actions/require-admin";
+import {
+  RateLimitedError,
+  checkAdminWriteRateLimit,
+} from "@/app/shared/lib/rate-limit";
 
 type ErrorMetadata = {
   name: string;
@@ -27,10 +33,31 @@ export const actionClient = createSafeActionClient({
     if (error.digest?.startsWith("NEXT_REDIRECT")) {
       throw error;
     }
+    if (error instanceof RateLimitedError) {
+      return error.message;
+    }
     console.error("server_action_failed", sanitizeErrorMetadata(error));
     if (process.env.NODE_ENV === "development") {
       return error.message;
     }
     return "Ocurrió un error inesperado. Por favor, inténtalo de nuevo más tarde.";
   },
+});
+
+/**
+ * Cliente para escrituras de admin: exige sesión admin + rate limit
+ * (30/min por IP+usuario). Usarlo en TODA action que escriba.
+ */
+export const adminActionClient = actionClient.use(async ({ next }) => {
+  const admin = await requireAdmin();
+
+  let requestHeaders: Headers | undefined;
+  try {
+    requestHeaders = await headers();
+  } catch {
+    requestHeaders = undefined;
+  }
+  await checkAdminWriteRateLimit(requestHeaders, admin.id);
+
+  return next({ ctx: { admin } });
 });
