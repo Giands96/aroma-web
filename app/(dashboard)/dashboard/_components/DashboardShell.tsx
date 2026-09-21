@@ -9,7 +9,7 @@ export default function DashboardShell({ children }: DashboardShellProps) {
   return (
     <div className="min-h-svh bg-zinc-50/70">
       <DashboardHeader />
-      <main className="pb-20 md:pl-64 md:pb-0">
+      <main className="pb-[calc(5rem+env(safe-area-inset-bottom))] md:pl-64 md:pb-0">
         <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           {children}
         </div>
