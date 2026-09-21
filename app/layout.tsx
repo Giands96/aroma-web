@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import { Inter, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { ViewTransition } from "react";
+import { Toaster } from "sonner";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -44,6 +45,7 @@ export default function RootLayout({
         <ViewTransition default="page-transition">
           {children}
         </ViewTransition>
+        <Toaster position="bottom-center" />
       </body>
     </html>
   );
