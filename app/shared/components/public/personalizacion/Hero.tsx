@@ -24,7 +24,7 @@ export default function PersonalizacionHero({title = "Personalización"}: Person
         "
       >
         {/* Contenido */}
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center mt-16 lg:mt-0">
           <span
             className="
               font-dm-sans text-[0.8rem]

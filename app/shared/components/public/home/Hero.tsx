@@ -43,7 +43,7 @@ export default function Hero() {
               ease="power3.out"
               perspective={700}
               creaseShading={0.55}
-              fontSize="clamp(56px, 8vw, 96px)"
+              fontSize="clamp(48px, 8vw, 96px)"
               fontWeight={500}
               color="#f7f2e8"
             />
