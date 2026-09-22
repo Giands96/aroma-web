@@ -39,7 +39,7 @@ export default function Footer() {
           {/* Navegación */}
           <nav
             aria-label="Navegación del pie de página"
-            className="border-b border-white/40 p-6 md:col-span-4 md:border-b-0 md:border-r lg:p-10"
+            className="border-b border-white/40 p-6 md:col-span-4 md:border-b-0  lg:p-10"
           >
             <span className="font-dm-sans text-[0.65rem] uppercase tracking-[0.22em] text-white/60">
               Navegación
@@ -74,7 +74,7 @@ export default function Footer() {
           </nav>
 
           {/* Contacto */}
-          <div className="border-b border-white/40 p-6 md:col-span-4 md:border-b-0 md:border-r lg:p-10">
+          <div className="border-b border-white/40 p-6 md:col-span-4 md:border-b-0  lg:p-10">
             <span className="font-dm-sans text-[0.65rem] uppercase tracking-[0.22em] text-white/60">
               Contacto
             </span>
@@ -114,7 +114,7 @@ export default function Footer() {
                 </span>
 
                 <p className="mt-2 font-dm-sans text-sm leading-6">
-                  Lima, Perú
+                  Huaral, Perú
                 </p>
               </div>
             </div>
