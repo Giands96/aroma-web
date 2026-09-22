@@ -50,7 +50,7 @@ export default function ProductGallery({
 
   return (
     <div className="h-full">
-      <figure className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-100 md:min-h-[650px] lg:h-full lg:aspect-auto">
+      <figure className="relative aspect-4/5 w-full overflow-hidden bg-neutral-100 md:min-h-162.5 lg:h-full lg:aspect-auto">
         <Image
           src={selectedImage.secure_url}
           alt={`${productName} - imagen ${selectedIndex + 1}`}
@@ -71,7 +71,7 @@ export default function ProductGallery({
                   onClick={() => setSelectedIndex(index)}
                   aria-label={`Ver imagen ${index + 1} de ${productName}`}
                   aria-pressed={isSelected}
-                  className={`size-2 rounded-full shadow-sm transition-transform hover:scale-125 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
+                  className={`size-2 rounded-full shadow-sm transition-transform hover:scale-125 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${
                     isSelected ? "bg-white" : "bg-white/70 hover:bg-white"
                   }`}
                 />

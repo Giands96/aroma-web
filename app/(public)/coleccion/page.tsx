@@ -1,4 +1,5 @@
 import CollectionHero from "@/app/shared/components/public/coleccion/CollectionHero";
+import Reveal from "@/app/shared/components/ui/Reveal";
 import { redirect } from "next/navigation";
 import HeroImage from "@public/collection-hero.png"
 import ProductGrid from './../../shared/components/public/coleccion/ProductGrid';

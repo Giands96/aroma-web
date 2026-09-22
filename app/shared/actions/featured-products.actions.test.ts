@@ -79,8 +79,9 @@ describe("featured product actions", () => {
       productId: "11111111-1111-4111-8111-111111111111",
     });
 
-    expect(consoleError).toHaveBeenCalledWith("featured_product_create_failed", {
-      stage: "authorization",
+    // El guard ahora corre en el middleware de adminActionClient, por eso
+    // el log sale por handleServerError. Lo importante: sanitizado, sin details.
+    expect(consoleError).toHaveBeenCalledWith("server_action_failed", {
       name: "Error",
       code: "42501",
       status: 403,

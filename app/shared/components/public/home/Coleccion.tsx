@@ -6,6 +6,7 @@ import {
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import ProductCard from "./Producto";
+import Reveal from "@/app/shared/components/ui/Reveal";
 import { ROUTES } from "@/app/shared/routes/routes";
 
 interface HomeProduct {

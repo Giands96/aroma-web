@@ -2,9 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireAdmin } from "@/app/shared/actions/require-admin";
 import {
-  actionClient,
+  adminActionClient,
   sanitizeErrorMetadata,
 } from "@/app/shared/lib/safe-action";
 import {
@@ -25,19 +24,9 @@ function revalidateFeaturedProductPaths() {
   revalidatePath(ROUTES.DASHBOARD.FEATURED);
 }
 
-export const createFeaturedProductAction = actionClient
+export const createFeaturedProductAction = adminActionClient
   .inputSchema(createFeaturedProductInputSchema)
   .action(async ({ parsedInput }) => {
-    try {
-      await requireAdmin();
-    } catch (error) {
-      console.error("featured_product_create_failed", {
-        stage: "authorization",
-        ...sanitizeErrorMetadata(error),
-      });
-      throw error;
-    }
-
     try {
       await createFeaturedProduct(parsedInput.productId);
     } catch (error) {
@@ -51,10 +40,9 @@ export const createFeaturedProductAction = actionClient
     revalidateFeaturedProductPaths();
   });
 
-export const deleteFeaturedProductAction = actionClient
+export const deleteFeaturedProductAction = adminActionClient
   .inputSchema(deleteFeaturedProductInputSchema)
   .action(async ({ parsedInput }) => {
-    await requireAdmin();
     await deleteFeaturedProduct(String(parsedInput.id));
     revalidateFeaturedProductPaths();
   });

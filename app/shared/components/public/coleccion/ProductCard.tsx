@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import Reveal from "@/app/shared/components/ui/Reveal";
 import { ROUTES } from "@/app/shared/routes/routes";
 
 interface ProductCardProps {

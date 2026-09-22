@@ -24,7 +24,8 @@ export default function CollectionHero({
         src={imageSrc}
         alt=""
         fill
-        preload
+        priority
+        fetchPriority="high"
         sizes="100vw"
         className="-z-30 object-cover object-center"
       />
@@ -52,7 +53,7 @@ export default function CollectionHero({
       >
         {/* Contenido inferior */}
         <div
-          className="grid flex-1 grid-cols-1 content-end gap-10 py-10 lg:grid-cols-12 lg:items-end lg:gap-8 lg:py-14
+          className="animate-hero-fade-in flex h-svh gap-10 py-10  lg:items-end lg:gap-8 lg:py-14
           "
         >
           {/* Título */}
@@ -86,7 +87,6 @@ export default function CollectionHero({
           <div
             className="
               border-t border-white/60 pt-5
-              md:col-span-3
               md:border-l md:border-t-0
               md:pl-6 md:pt-0
             "
