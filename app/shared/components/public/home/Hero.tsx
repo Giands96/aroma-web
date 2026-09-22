@@ -16,7 +16,8 @@ export default function Hero() {
         src="/hero.png"
         alt=""
         fill
-        preload
+        priority
+        fetchPriority="high"
         sizes="100vw"
         className="-z-20 object-cover object-[center_45%]"
       />

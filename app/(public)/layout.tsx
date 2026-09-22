@@ -17,7 +17,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
 
       {children}
 
-      <WhatsAppButton href="https://wa.me/1234567890"/>
+      <WhatsAppButton href="https://wa.me/+51974137694/?text=Hola+Aroma+necesito+cotizar+velas"/>
       <footer>
         <Footer/>
       </footer>

@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { getPublicWhatsAppConfig } from "@/app/shared/services/config.service";
 import ProductPurchaseActions from "@/app/shared/components/public/coleccion/ProductPurchaseActions";
 import ProductGallery from "@/app/shared/components/public/coleccion/ProductGallery";
+import Reveal from "@/app/shared/components/ui/Reveal";
 import { ROUTES } from "@/app/shared/routes/routes";
 
 export default async function Page({params}: {
@@ -37,12 +38,15 @@ export default async function Page({params}: {
 
         <section className="grid gap-8 lg:grid-cols-[minmax(0,800px)_minmax(320px,1fr)] lg:items-center lg:gap-12">
           {/* Galería */}
-          <div className="w-full max-w-200 lg:self-stretch">
+          <Reveal className="w-full max-w-200 lg:self-stretch">
+          <div className="w-full">
             <ProductGallery images={imagenes} productName={product.nombre} />
           </div>
+          </Reveal>
 
           {/* Información */}
-          <div className="w-full lg:self-center">
+          <Reveal delay={0.1} className="w-full lg:self-center">
+          <div className="w-full">
             <div className="border-b border-neutral-200 pb-6">
               <p
                 className="
@@ -80,6 +84,7 @@ export default async function Page({params}: {
               messageTemplate={whatsappConfig.mensaje_producto}
             />
           </div>
+          </Reveal>
         </section>
       </div>
     </main>

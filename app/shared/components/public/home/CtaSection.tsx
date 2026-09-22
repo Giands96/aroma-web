@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Clock, Flame, MapPin } from "lucide-react";
+import Reveal from "@/app/shared/components/ui/Reveal";
 import { ROUTES } from "@/app/shared/routes/routes";
 
 interface AtmosphereSectionProps {
@@ -15,8 +16,9 @@ export default function AtmosphereSection({
       aria-labelledby="atmosphere-title"
       className="w-full border-y border-hard-brown bg-[#F4EDE9] text-hard-brown"
     >
-      <div className="w-full px-6 sm:px-8 lg:px-12">
+      <div className="w-full  sm:px-8 lg:px-12">
         {/* Encabezado editorial — continuidad con Personalización */}
+        <Reveal>
         <header className="grid grid-cols-1 border-b border-hard-brown md:grid-cols-12">
           <div className="flex items-center gap-4 px-5 py-5 md:col-span-9 md:px-8 lg:px-12">
             <span
@@ -41,11 +43,13 @@ export default function AtmosphereSection({
             </span>
           </div>
         </header>
+        </Reveal>
 
         {/* Cuerpo: postal vintage / cupón */}
         <div className="grid grid-cols-1 md:grid-cols-12">
           {/* Postal / polaroid */}
           <figure className="relative flex flex-col justify-center border-b border-hard-brown p-6 md:col-span-5 md:border-b-0 md:border-r md:p-8 lg:p-12">
+            <Reveal delay={0}>
             <div className="relative mx-auto w-full max-w-md -rotate-1 rounded-[2px] border border-hard-brown bg-[#FAFAF9] p-3 pb-12 shadow-[6px_6px_0_0_var(--color-hard-brown)] transition-transform duration-300 hover:rotate-0">
               {/* Cintas */}
               <div
@@ -99,6 +103,7 @@ export default function AtmosphereSection({
                 mano ·
               </div>
             </div>
+            </Reveal>
           </figure>
 
           {/* Declaración editorial */}
@@ -107,6 +112,7 @@ export default function AtmosphereSection({
               El ritual
             </p>
 
+            <Reveal delay={0.1}>
             <div>
               <h2
                 id="atmosphere-title"
@@ -136,6 +142,7 @@ export default function AtmosphereSection({
                 ))}
               </dl>
             </div>
+            </Reveal>
 
             <p className="font-dm-sans text-[0.65rem] uppercase tracking-[0.2em] text-hard-brown/80">
               Papel · Cera · Pabilo — oficio de siempre
@@ -144,10 +151,11 @@ export default function AtmosphereSection({
 
           {/* Cupón / tarjeta perforada */}
           <aside className="relative flex min-h-[420px] flex-col bg-hard-brown p-6 text-[#F4EDE9] md:col-span-3 md:p-8">
+            <Reveal delay={0.2} className="flex flex-1 flex-col">
             {/* Perforación lateral */}
             <div
               aria-hidden="true"
-              className="absolute inset-y-4 -left-[7px] hidden w-[13px] flex-col justify-between md:flex"
+              className="absolute inset-y-4 -left-[34px] hidden w-[13px] flex-col justify-between md:flex"
             >
               {Array.from({ length: 14 }).map((_, i) => (
                 <span
@@ -198,6 +206,7 @@ export default function AtmosphereSection({
                 Lun–Sáb · 9–19h · Lima
               </p>
             </div>
+            </Reveal>
           </aside>
         </div>
 

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Rose } from "lucide-react";
+import Reveal from "@/app/shared/components/ui/Reveal";
 
 interface Step {
   number: number;
@@ -43,6 +44,7 @@ export default function PersonalizacionPasos() {
       className="w-full border-y border-white/30 bg-hard-brown text-white"
     >
       {/* Encabezado editorial */}
+      <Reveal>
       <header className="grid grid-cols-1 border-b border-white/30 md:grid-cols-12">
         <div className="px-6 py-12 md:col-span-9 md:px-10 lg:px-14 lg:py-16">
           <div className="mb-8 flex items-center gap-3">
@@ -70,10 +72,11 @@ export default function PersonalizacionPasos() {
           <span>03 pasos</span>
         </div>
       </header>
+      </Reveal>
 
       {/* Pasos */}
       <ol className="grid auto-rows-fr grid-cols-1 items-stretch md:grid-cols-3">
-        {steps.map((step) => (
+        {steps.map((step, i) => (
           <li
             key={step.number}
             className="
@@ -126,7 +129,8 @@ export default function PersonalizacionPasos() {
             <div aria-hidden="true" className="flex-1 py-12 md:py-16" />
 
             {/* Contenido inferior */}
-            <div className="mt-auto px-6 pb-8 md:px-8 md:pb-10 lg:px-10 lg:pb-12">
+            <Reveal delay={i * 0.08} className="mt-auto">
+            <div className="px-6 pb-8 md:px-8 md:pb-10 lg:px-10 lg:pb-12">
               <div
                 aria-hidden="true"
                 className="mb-7 h-px w-full origin-left bg-white/50 transition-transform duration-500 group-hover:scale-x-90"
@@ -140,6 +144,7 @@ export default function PersonalizacionPasos() {
                 {step.description}
               </p>
             </div>
+            </Reveal>
           </li>
         ))}
       </ol>

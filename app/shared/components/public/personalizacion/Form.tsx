@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { FormEvent, InputHTMLAttributes } from "react";
 import { MoveUpRight } from "lucide-react";
+import Reveal from "@/app/shared/components/ui/Reveal";
 
 interface PersonalizacionFormularioProps {
   whatsappNumber: string;
@@ -78,6 +79,7 @@ export default function PersonalizacionFormulario({
       <div className=" grid w-full grid-cols-1 md:grid-cols-12">
         {/* Presentación */}
         <article className="flex flex-col border-b border-hard-brown/30 md:col-span-5 md:border-b-0 md:border-r">
+          <Reveal>
           <div className="px-6 py-12 md:px-10 md:py-16 lg:px-14">
             <span className="font-dm-sans font-semibold text-[0.8rem] uppercase tracking-[0.24em] text-hard-brown/60">
               Solicitud personalizada
@@ -100,6 +102,7 @@ export default function PersonalizacionFormulario({
               a definir el aroma, la presentación y los acabados de tu vela.
             </p>
           </div>
+          </Reveal>
 
           <figure className="relative mt-auto aspect-[4/3] overflow-hidden border-t border-hard-brown/30">
             <Image

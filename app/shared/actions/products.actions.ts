@@ -6,8 +6,7 @@ import {
   assertActiveProductHasOption,
   assertValidProductOptionReconciliation,
 } from "@/app/shared/actions/product-option-reconciliation";
-import { requireAdmin } from "@/app/shared/actions/require-admin";
-import { actionClient } from "@/app/shared/lib/safe-action";
+import { adminActionClient } from "@/app/shared/lib/safe-action";
 import { validateImageFile } from "@/app/shared/lib/validations/image.schema";
 import { productOptionSchema } from "@/app/shared/lib/validations/product-option.schema";
 import {
@@ -140,9 +139,7 @@ function withProductImages<T extends object>(input: T, images: ProductImage[]) {
   };
 }
 
-export const createProductAction = actionClient.inputSchema(createProductInputSchema).action(async ({ parsedInput }) => {
-    await requireAdmin();
-
+export const createProductAction = adminActionClient.inputSchema(createProductInputSchema).action(async ({ parsedInput }) => {
     const { options, image_entries, ...productInput } = parsedInput;
     const { images, uploadedImages } = await resolveImageEntries(image_entries, []);
     let savedProduct: Product;
@@ -161,11 +158,9 @@ export const createProductAction = actionClient.inputSchema(createProductInputSc
     return savedProduct;
   });
 
-export const updateProductAction = actionClient
+export const updateProductAction = adminActionClient
   .inputSchema(updateProductInputSchema)
   .action(async ({ parsedInput }) => {
-    await requireAdmin();
-
     const { id, options, image_entries, ...productInput } = parsedInput;
     const currentProduct = await getProductById(id);
     if (!currentProduct) throw new Error("Product not found");
@@ -209,11 +204,9 @@ export const updateProductAction = actionClient
     return savedProduct;
   });
 
-export const deleteProductAction = actionClient
+export const deleteProductAction = adminActionClient
   .inputSchema(deleteProductInputSchema)
   .action(async ({ parsedInput }) => {
-    await requireAdmin();
-
     const product = await getProductById(parsedInput.id);
     if (!product) throw new Error("Product not found");
 

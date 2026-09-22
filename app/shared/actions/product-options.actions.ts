@@ -2,8 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireAdmin } from "@/app/shared/actions/require-admin";
-import { actionClient } from "@/app/shared/lib/safe-action";
+import { adminActionClient } from "@/app/shared/lib/safe-action";
 import { productOptionUpdateSchema } from "@/app/shared/lib/validations/product-option.schema";
 import { getProductById } from "@/app/shared/services/products.service";
 import {
@@ -28,10 +27,9 @@ async function revalidateProductOptionPaths(productId: string) {
   }
 }
 
-export const updateProductOptionAction = actionClient
+export const updateProductOptionAction = adminActionClient
   .inputSchema(updateProductOptionInputSchema)
   .action(async ({ parsedInput }) => {
-    await requireAdmin();
     const { id, ...input } = parsedInput;
     const option = await getProductOptionById(id);
     if (!option) throw new Error("Product option not found");
@@ -41,10 +39,9 @@ export const updateProductOptionAction = actionClient
     return updatedOption;
   });
 
-export const deleteProductOptionAction = actionClient
+export const deleteProductOptionAction = adminActionClient
   .inputSchema(deleteProductOptionInputSchema)
   .action(async ({ parsedInput }) => {
-    await requireAdmin();
     const option = await getProductOptionById(parsedInput.id);
     if (!option) throw new Error("Product option not found");
 

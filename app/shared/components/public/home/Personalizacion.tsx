@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import Reveal from "@/app/shared/components/ui/Reveal";
 import { ROUTES } from "@/app/shared/routes/routes";
 
 const STEPS = [
@@ -29,6 +30,7 @@ export default function PersonalizationSection() {
     >
       <div className="w-full px-6 sm:px-8 lg:px-12">
         {/* Encabezado respirable — un solo borde, sin celda vacía */}
+        <Reveal>
         <header className="grid grid-cols-1 gap-6 border-b border-[#F4EDE9]/20 py-12 md:grid-cols-12 md:items-end lg:py-16">
           <div className="md:col-span-7 lg:col-span-8">
             <p className="font-dm-sans text-[0.65rem] uppercase tracking-[0.24em] text-[#EAD8C9]/80">
@@ -59,10 +61,12 @@ export default function PersonalizationSection() {
             </Link>
           </div>
         </header>
+        </Reveal>
 
         {/* Hero único — imagen protagonista grande */}
         <div className="grid grid-cols-1 items-center gap-10 py-12 md:grid-cols-12 lg:gap-14 lg:py-20">
-          <figure className="relative overflow-hidden rounded-[2px] border border-[#F4EDE9]/25 md:col-span-7 lg:col-span-8">
+          <Reveal className="md:col-span-7 lg:col-span-8" delay={0}>
+          <figure className="relative overflow-hidden rounded-[2px] border border-[#F4EDE9]/25">
             <div className="relative aspect-[4/3] w-full min-h-[320px] sm:min-h-[420px] md:aspect-[16/10] md:min-h-[480px] lg:min-h-[580px]">
               <Image
                 src="/imagen-1-grid.jpg"
@@ -78,8 +82,10 @@ export default function PersonalizationSection() {
               <span className="hidden sm:inline">Vertido a mano</span>
             </figcaption>
           </figure>
+          </Reveal>
 
-          <article className="md:col-span-5 lg:col-span-4">
+          <Reveal className="md:col-span-5 lg:col-span-4" delay={0.1}>
+          <article>
             <p className="font-dm-sans text-[0.8rem] uppercase tracking-[0.22em] text-[#EAD8C9]/80">
               Nuestra filosofía
             </p>
@@ -91,12 +97,14 @@ export default function PersonalizationSection() {
               una conversación, una propuesta, una pieza única.
             </p>
           </article>
+          </Reveal>
         </div>
 
         {/* Proceso — lista calma, sin celdas encerradas */}
         <ol className="grid grid-cols-1 gap-10 border-t border-[#F4EDE9]/20 py-12 md:grid-cols-3 lg:py-16">
-          {STEPS.map((step) => (
+          {STEPS.map((step, i) => (
             <li key={step.num} className="flex flex-col">
+              <Reveal delay={i * 0.08}>
               <span
                 aria-hidden="true"
                 className="font-mileast text-5xl leading-none tracking-[-0.04em] text-[#F4EDE9]/25 lg:text-6xl"
@@ -109,11 +117,13 @@ export default function PersonalizationSection() {
               <p className="mt-3 max-w-xs font-dm-sans text-sm leading-6 text-[#F4EDE9]/85">
                 {step.text}
               </p>
+              </Reveal>
             </li>
           ))}
         </ol>
 
         {/* Cierre — invertido para que reviente sobre el fondo oscuro */}
+        <Reveal>
         <div className="pb-12 lg:pb-16">
           <Link
             href={ROUTES.PERSONALIZACION}
@@ -136,6 +146,7 @@ export default function PersonalizationSection() {
             </span>
           </Link>
         </div>
+        </Reveal>
       </div>
     </section>
   );

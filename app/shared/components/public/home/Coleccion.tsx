@@ -6,6 +6,7 @@ import {
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import ProductCard from "./Producto";
+import Reveal from "@/app/shared/components/ui/Reveal";
 import { ROUTES } from "@/app/shared/routes/routes";
 
 interface HomeProduct {
@@ -54,6 +55,7 @@ export default async function ColeccionSection() {
     >
       <div className="w-full px-6 sm:px-8 lg:px-12">
         {/* Encabezado unificado con el resto del Home */}
+        <Reveal>
         <header className="grid grid-cols-1 gap-6 border-b border-hard-brown/60 py-12 md:grid-cols-12 md:items-end lg:py-16">
           <div className="md:col-span-7 lg:col-span-8">
             <p className="font-dm-sans text-[0.65rem] uppercase tracking-[0.24em] text-hard-brown/80">
@@ -84,6 +86,7 @@ export default async function ColeccionSection() {
             </Link>
           </div>
         </header>
+        </Reveal>
 
         {/* Fichas alternadas — lista semántica */}
         <ol>
@@ -93,6 +96,7 @@ export default async function ColeccionSection() {
         </ol>
 
         {/* Cierre — una sola acción, mismo idioma que Personalización */}
+        <Reveal>
         <div className="pb-12 lg:pb-16">
           <Link
             href={ROUTES.COLECCION}
@@ -115,6 +119,7 @@ export default async function ColeccionSection() {
             </span>
           </Link>
         </div>
+        </Reveal>
       </div>
     </section>
   );

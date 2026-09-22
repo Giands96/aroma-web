@@ -16,7 +16,7 @@ const socialItems = [
   },
   {
     label: "Facebook",
-    href: "https://www.facebook.com/",
+    href: "https://www.facebook.com/profile.php?id=61593105921106",
   },
   {
     label: "TikTok",
@@ -86,12 +86,12 @@ export default function Footer() {
                 </span>
 
                 <a
-                  href="https://wa.me/51XXXXXXXXX"
+                  href="https://wa.me/51974137694"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-2 inline-block font-mileast text-2xl transition-opacity hover:opacity-60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 >
-                  +51 XXX XXX XXX
+                  +51 974 137 694
                 </a>
               </div>
 

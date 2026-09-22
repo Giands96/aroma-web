@@ -17,7 +17,7 @@ export default function PersonalizacionHero({title = "Personalización"}: Person
     >
       <div
         className="
-           flex min-h-[calc(100svh-7rem)]
+           animate-hero-fade-in flex min-h-[calc(100svh-7rem)]
           w-full 
           flex-col items-center justify-center
           text-center
@@ -60,12 +60,14 @@ export default function PersonalizacionHero({title = "Personalización"}: Person
         </div>
 
         {/* Imagen sin espacio flexible */}
+        
         <figure className="mt-8 md:mt-10">
           <Image
             src="/VELA.webp"
             alt="Vela Aroma personalizada"
             width={700}
             height={700}
+            priority
             sizes="(max-width: 767px) 92vw, 500px"
             className="
               h-auto w-[min(92vw,390px)]
