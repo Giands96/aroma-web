@@ -53,7 +53,7 @@ export default function CollectionHero({
       >
         {/* Contenido inferior */}
         <div
-          className="animate-hero-fade-in flex h-svh gap-10 py-10  lg:items-end lg:gap-8 lg:py-14
+          className="animate-hero-fade-in flex md:flex-row flex-col items-end h-svh gap-10 py-10 md:justify-normal justify-end  lg:gap-8 lg:py-14
           "
         >
           {/* Título */}
@@ -88,14 +88,14 @@ export default function CollectionHero({
             className="
               border-t border-white/60 pt-5
               md:border-l md:border-t-0
-              md:pl-6 md:pt-0
+              md:pl-6 md:pt-0 h-full max-h-24
             "
           >
             <p
               className="
                 max-w-sm font-dm-sans
                 text-sm leading-6 text-white/90
-                sm:text-base sm:leading-7
+                sm:text-base sm:leading-7 
               "
             >
               {description}
