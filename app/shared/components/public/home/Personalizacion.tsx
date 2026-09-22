@@ -136,7 +136,7 @@ export default function PersonalizationSection() {
             </span>
           </Link>
         </div>
-        </Reveal>
+        
       </div>
     </section>
   );
