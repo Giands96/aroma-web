@@ -28,7 +28,6 @@ export default function ProductCard({
 
   return (
     <li className="list-none">
-      <Reveal delay={((index ?? 0) % 3) * 0.08}>
       <Link
         href={ROUTES.PRODUCT(slug)}
         aria-label={`Ver detalles de ${nombre}`}
@@ -98,7 +97,6 @@ export default function ProductCard({
           </div>
         </div>
       </Link>
-      </Reveal>
     </li>
   );
 }
