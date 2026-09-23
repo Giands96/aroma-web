@@ -4,6 +4,7 @@ import { Inter, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { ViewTransition } from "react";
 import { Toaster } from "sonner";
+import SmoothScroll from "@/app/shared/components/SmoothScroll";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -42,10 +43,12 @@ export default function RootLayout({
       className={`${mileast.variable} ${inter.variable} ${dmSans.variable} h-full antialiased `}
     >
       <body className="min-h-full flex flex-col ">
-        <ViewTransition default="page-transition">
-          {children}
-        </ViewTransition>
-        <Toaster position="bottom-center" />
+        <SmoothScroll>
+          <ViewTransition default="page-transition">
+            {children}
+          </ViewTransition>
+          <Toaster position="bottom-center" />
+        </SmoothScroll>
       </body>
     </html>
   );
