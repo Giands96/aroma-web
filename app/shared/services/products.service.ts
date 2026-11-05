@@ -8,6 +8,14 @@ import type { ProductOptionInput } from "@/app/shared/lib/validations/product-op
 import type { ProductImage } from "@/app/shared/lib/validations/product-image.schema";
 import type { Product } from "@/app/shared/types/product.types";
 import type { FeaturedProduct } from "@/app/shared/types";
+import {
+  getSnapshotFeaturedProducts,
+  getSnapshotLatestProducts,
+  getSnapshotProductBySlug,
+  getSnapshotProductsPage,
+  logPublicCatalogFallback,
+} from "@/app/shared/lib/catalog-snapshot";
+import { unstable_rethrow } from "next/navigation";
 import { unstable_cache } from "next/cache";
 
 export const PUBLIC_PRODUCTS_CACHE_TAG = "public-products";
@@ -78,11 +86,17 @@ const getCachedPublicProductsPage = unstable_cache(
   },
 );
 
-export function getPublicProductsPage(
+export async function getPublicProductsPage(
   page: number,
   pageSize: number,
 ): Promise<PaginatedProducts> {
-  return getCachedPublicProductsPage(page, pageSize);
+  try {
+    return await getCachedPublicProductsPage(page, pageSize);
+  } catch (error) {
+    unstable_rethrow(error);
+    logPublicCatalogFallback("public-products-page", error);
+    return getSnapshotProductsPage(page, pageSize);
+  }
 }
 
 export async function getProducts(): Promise<Product[]> {
@@ -100,18 +114,24 @@ export async function getProducts(): Promise<Product[]> {
 }
 
 export async function getThreeLastProducts(): Promise<Product[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("products")
-    .select("*, product_options!inner(*)")
-    .eq("activo", true)
-    .eq("product_options.activo", true)
-    .order("created_at", { ascending: false })
-    .order("cantidad", { ascending: true, referencedTable: "product_options" })
-    .limit(3);
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("products")
+      .select("*, product_options!inner(*)")
+      .eq("activo", true)
+      .eq("product_options.activo", true)
+      .order("created_at", { ascending: false })
+      .order("cantidad", { ascending: true, referencedTable: "product_options" })
+      .limit(3);
 
-  if (error) throw error;
-  return (data ?? []) as Product[];
+    if (error) throw error;
+    return (data ?? []) as Product[];
+  } catch (error) {
+    unstable_rethrow(error);
+    logPublicCatalogFallback("latest-products", error);
+    return getSnapshotLatestProducts(3);
+  }
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
@@ -155,7 +175,11 @@ const getCachedPublicProductBySlug = unstable_cache(
 );
 
 export function getPublicProductBySlug(slug: string): Promise<Product | null> {
-  return getCachedPublicProductBySlug(slug);
+  return getCachedPublicProductBySlug(slug).catch((error: unknown) => {
+    unstable_rethrow(error);
+    logPublicCatalogFallback("public-product-detail", error);
+    return getSnapshotProductBySlug(slug);
+  });
 }
 
 
@@ -400,20 +424,26 @@ export async function getConfiguredFeaturedProducts(): Promise<FeaturedProduct[]
 }
 
 export async function getFeaturedProducts(): Promise<FeaturedProduct[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("featured_products")
-    .select(
-      "id, created_at, product_id, posicion, products!inner(slug, nombre, descripcion, imagen_public_id, imagen_url, imagenes, product_options!inner(precio))",
-    )
-    .eq("products.activo", true)
-    .eq("products.product_options.activo", true)
-    .order("posicion", { ascending: true })
-    .order("cantidad", { ascending: true, referencedTable: "products.product_options" })
-    .limit(MAX_FEATURED_PRODUCTS);
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("featured_products")
+      .select(
+        "id, created_at, product_id, posicion, products!inner(slug, nombre, descripcion, imagen_public_id, imagen_url, imagenes, product_options!inner(precio))",
+      )
+      .eq("products.activo", true)
+      .eq("products.product_options.activo", true)
+      .order("posicion", { ascending: true })
+      .order("cantidad", { ascending: true, referencedTable: "products.product_options" })
+      .limit(MAX_FEATURED_PRODUCTS);
 
-  if (error) throw error;
-  return data as unknown as FeaturedProduct[];
+    if (error) throw error;
+    return data as unknown as FeaturedProduct[];
+  } catch (error) {
+    unstable_rethrow(error);
+    logPublicCatalogFallback("featured-products", error);
+    return getSnapshotFeaturedProducts();
+  }
 }
 
 export async function deleteFeaturedProduct(id: string): Promise<void> {

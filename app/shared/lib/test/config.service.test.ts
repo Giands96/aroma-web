@@ -104,7 +104,7 @@ describe("config service", () => {
 
     await expect(getWhatsAppConfig()).resolves.toEqual({
       clave: "principal",
-      telefono: "",
+      telefono: "51974137694",
       mensaje_carrito: "Hola, quiero información sobre mi carrito.",
       mensaje_producto: "Hola, quiero información sobre {producto_name}.",
     });

@@ -1,0 +1,126 @@
+{
+  "version": 1,
+  "products": [
+    {
+      "id": "27c89fff-6a76-4d21-a747-cd90a4038580",
+      "slug": "vela-aurora",
+      "nombre": "Vela Aurora",
+      "descripcion": "Vela Aurora es una vela aromática con olor a brisa y canela",
+      "imagen_public_id": "aroma/products/iielbwys49cfkidz9ht0",
+      "imagen_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1787292265/aroma/products/iielbwys49cfkidz9ht0.jpg",
+      "activo": true,
+      "created_at": "2026-08-21T06:04:25.696709+00:00",
+      "updated_at": "2026-08-21T06:04:25.696709+00:00",
+      "imagenes": [
+        {
+          "public_id": "aroma/products/iielbwys49cfkidz9ht0",
+          "secure_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1787292265/aroma/products/iielbwys49cfkidz9ht0.jpg"
+        }
+      ],
+      "product_options": [
+        {
+          "id": "c4688d63-dde4-45cf-83d8-b3186cbbea41",
+          "activo": true,
+          "nombre": "Pack 1",
+          "precio": 76,
+          "cantidad": 15,
+          "created_at": "2026-08-21T06:04:25.871525+00:00",
+          "product_id": "27c89fff-6a76-4d21-a747-cd90a4038580"
+        }
+      ]
+    },
+    {
+      "id": "4a894840-32aa-4f51-8f41-04af8fc66673",
+      "slug": "vela-aromatica",
+      "nombre": "Vela Aromatica",
+      "descripcion": "Vela aromatica 123",
+      "imagen_public_id": "aroma/products/fvjppmosyky88i8ql9gq",
+      "imagen_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1785869407/aroma/products/fvjppmosyky88i8ql9gq.jpg",
+      "activo": true,
+      "created_at": "2026-08-04T18:50:08.353894+00:00",
+      "updated_at": "2026-08-04T18:50:08.353894+00:00",
+      "imagenes": [
+        {
+          "public_id": "aroma/products/fvjppmosyky88i8ql9gq",
+          "secure_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1785869407/aroma/products/fvjppmosyky88i8ql9gq.jpg"
+        },
+        {
+          "public_id": "aroma/products/slzvvqps0mswpwvdifos",
+          "secure_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1785869442/aroma/products/slzvvqps0mswpwvdifos.jpg"
+        }
+      ],
+      "product_options": [
+        {
+          "id": "51aa647d-bb90-44d6-b486-f975dcd426cc",
+          "activo": true,
+          "nombre": "Pack 1",
+          "precio": 18,
+          "cantidad": 10,
+          "created_at": "2026-08-04T18:50:08.606182+00:00",
+          "product_id": "4a894840-32aa-4f51-8f41-04af8fc66673"
+        }
+      ]
+    }
+  ],
+  "featuredProducts": [
+    {
+      "id": 5,
+      "created_at": "2026-08-21T06:04:33.869203+00:00",
+      "product_id": "27c89fff-6a76-4d21-a747-cd90a4038580",
+      "posicion": 1,
+      "products": {
+        "slug": "vela-aurora",
+        "nombre": "Vela Aurora",
+        "imagenes": [
+          {
+            "public_id": "aroma/products/iielbwys49cfkidz9ht0",
+            "secure_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1787292265/aroma/products/iielbwys49cfkidz9ht0.jpg"
+          }
+        ],
+        "imagen_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1787292265/aroma/products/iielbwys49cfkidz9ht0.jpg",
+        "descripcion": "Vela Aurora es una vela aromática con olor a brisa y canela",
+        "product_options": [
+          {
+            "precio": 76
+          }
+        ],
+        "imagen_public_id": "aroma/products/iielbwys49cfkidz9ht0"
+      }
+    },
+    {
+      "id": 6,
+      "created_at": "2026-08-21T20:05:33.754106+00:00",
+      "product_id": "4a894840-32aa-4f51-8f41-04af8fc66673",
+      "posicion": 2,
+      "products": {
+        "slug": "vela-aromatica",
+        "nombre": "Vela Aromatica",
+        "imagenes": [
+          {
+            "public_id": "aroma/products/fvjppmosyky88i8ql9gq",
+            "secure_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1785869407/aroma/products/fvjppmosyky88i8ql9gq.jpg"
+          },
+          {
+            "public_id": "aroma/products/slzvvqps0mswpwvdifos",
+            "secure_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1785869442/aroma/products/slzvvqps0mswpwvdifos.jpg"
+          }
+        ],
+        "imagen_url": "https://res.cloudinary.com/dwbmxfezu/image/upload/v1785869407/aroma/products/fvjppmosyky88i8ql9gq.jpg",
+        "descripcion": "Vela aromatica 123",
+        "product_options": [
+          {
+            "precio": 18
+          }
+        ],
+        "imagen_public_id": "aroma/products/fvjppmosyky88i8ql9gq"
+      }
+    }
+  ],
+  "whatsappConfig": {
+    "clave": "principal",
+    "telefono": "974137694",
+    "mensaje_carrito": "Hola, quiero cotizar mi carrito: {producto_name} x{producto_cantidad} = {producto_total}",
+    "mensaje_producto": "Hola, quiero información sobre {producto_name}."
+  },
+  "updatedAt": "2026-11-05T17:43:21.955Z"
+}

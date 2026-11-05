@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/refresh-catalog-snapshot.mjs && next build",
     "start": "next start",
+    "snapshot": "node scripts/refresh-catalog-snapshot.mjs",
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
