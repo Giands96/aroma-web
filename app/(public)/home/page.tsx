@@ -5,14 +5,14 @@ import React from "react";
 import AtmosphereSection from './../../shared/components/public/home/CtaSection';
 
 export default function HomePublic() {
-    return (
-      <main>
-        <Hero />
-        <ColeccionSection />
-        <Personalizacion />
-        <AtmosphereSection
-          whatsappHref="https://wa.me/51944888171"
-        />
-      </main>
-    );
+  return (
+    <main>
+      <Hero />
+      <ColeccionSection />
+      <Personalizacion />
+      <AtmosphereSection
+        whatsappHref="https://wa.me/51974137694"
+      />
+    </main>
+  );
 } 
